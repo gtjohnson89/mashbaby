@@ -1,0 +1,594 @@
+:root {
+  --dough: #f5d7a8;
+  --golden: #e0a45a;
+  --brown: #b56e2e;
+  --dark-brown: #7a4518;
+  --chip: #4a2c14;
+  --wall-top: #ffd6e8;
+  --wall-mid: #ffb8d2;
+  --wall-bot: #ff9ec5;
+  --ceiling: #fff0f6;
+  --molding: #fff8fc;
+  --floor: #f0c98a;
+  --floor-line: #e0b56e;
+  --pan: #8a9098;
+  --ink: #3a2a1a;
+  --blush: #ff9eb5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Nunito", system-ui, sans-serif;
+  background: #1a120c;
+  color: var(--ink);
+  touch-action: manipulation;
+}
+
+/* —— Start gate —— */
+.gate {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(ellipse at 30% 20%, #ffe0a8 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, #c9e8ff 0%, transparent 45%),
+    linear-gradient(160deg, #fff8ee, #e8f6ff);
+  z-index: 50;
+}
+
+.gate[hidden],
+.game[hidden] {
+  display: none !important;
+}
+
+.gate__card {
+  max-width: 420px;
+  text-align: center;
+  padding: 2rem 1.75rem;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 48px rgba(58, 42, 26, 0.16);
+}
+
+.gate__brand {
+  margin: 0;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brown);
+}
+
+.gate__title {
+  margin: 0.4rem 0 0.75rem;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 6vw, 2.4rem);
+  line-height: 1.15;
+}
+
+.gate__copy {
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+.gate__btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding: 0.9rem 1.75rem;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, #e08940, #d45a7a);
+  box-shadow: 0 8px 0 #a84e2a, 0 12px 28px rgba(212, 90, 122, 0.35);
+  transition: transform 0.12s ease;
+}
+
+.gate__btn:hover {
+  transform: translateY(-2px);
+}
+
+.gate__btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 3px 0 #a84e2a, 0 6px 16px rgba(212, 90, 122, 0.3);
+}
+
+.gate__parent {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+.gate__parent kbd {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  border-radius: 0.35em;
+  background: #eee4d4;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+/* —— Game world —— */
+.game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: none;
+}
+
+.walls {
+  position: absolute;
+  inset: 0 0 42% 0;
+  background-color: #1a1218;
+  background-image:
+    /* pink dots */
+    radial-gradient(circle at center, #ff9ec5 0 5px, transparent 6px),
+    radial-gradient(circle at center, #ffc2db 0 3px, transparent 4px),
+    /* purple dots */
+    radial-gradient(circle at center, #c49bff 0 5px, transparent 6px),
+    radial-gradient(circle at center, #e0c4ff 0 3px, transparent 4px),
+    /* base black wash */
+    linear-gradient(180deg, #2a1a22 0%, #1a1218 100%);
+  background-size:
+    56px 56px,
+    56px 56px,
+    56px 56px,
+    56px 56px,
+    100% 100%;
+  background-position:
+    0 0,
+    28px 28px,
+    28px 0,
+    0 28px,
+    0 0;
+}
+
+.walls::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 7%;
+  background: linear-gradient(180deg, #ffd6e8 0%, #d4b0ff 55%, #2a1a22 100%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.walls::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 18px;
+  background: linear-gradient(180deg, #c49bff, #1a1218);
+  border-top: 3px solid #ff9ec5;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+}
+
+.kitchen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shelf {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 48%;
+  height: 14px;
+  background: linear-gradient(180deg, #ffb8d2, #8a5fd4 55%, #1a1218);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.25);
+  border-top: 2px solid #c49bff;
+}
+
+.oven {
+  position: absolute;
+  width: min(280px, 38vw);
+  height: min(200px, 28vh);
+  left: calc(50% - min(40px, 6vw));
+  top: 52%;
+  transform: translate(-50%, -100%);
+  background: linear-gradient(180deg, #6a7380, #4a5360);
+  border-radius: 18px 18px 10px 10px;
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.15), 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.oven__window {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 18%;
+  bottom: 28%;
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at 50% 80%, rgba(255, 140, 60, 0.45), transparent 60%),
+    linear-gradient(180deg, #2a3038, #1a1e24);
+  border: 4px solid #3a424c;
+  box-shadow: inset 0 0 20px rgba(255, 120, 40, 0.25);
+}
+
+.oven__knob {
+  position: absolute;
+  top: 8%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ddd, #888);
+}
+
+.oven__knob--l { left: 14%; }
+.oven__knob--r { right: 14%; }
+
+.oven__handle {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 12%;
+  height: 14px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #c0c8d0, #808890);
+}
+
+.freezer {
+  position: absolute;
+  width: min(140px, 18vw);
+  height: min(170px, 24vh);
+  left: calc(50% + min(160px, 22vw));
+  top: 52%;
+  transform: translateY(-100%);
+  background: linear-gradient(180deg, #d8eefc, #9ec8e8 55%, #7aafd4);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 4px 0 rgba(255, 255, 255, 0.45),
+    0 12px 24px rgba(0, 0, 0, 0.18);
+  border: 3px solid #6a9abc;
+}
+
+.freezer__door {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 12%;
+  bottom: 22%;
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.55), transparent 45%),
+    linear-gradient(180deg, #b8e4ff, #7ab8de);
+  border: 3px solid #5a8fb0;
+  box-shadow: inset 0 0 16px rgba(255, 255, 255, 0.35);
+}
+
+.freezer__handle {
+  position: absolute;
+  right: 18%;
+  top: 42%;
+  width: 10px;
+  height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8f4ff, #90a8bc);
+}
+
+.freezer__label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6%;
+  text-align: center;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(40, 80, 120, 0.35);
+}
+
+.floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--floor) 0 48px,
+      var(--floor-line) 48px 50px
+    ),
+    linear-gradient(180deg, #f5d6a0, #e8ba72);
+  border-top: 6px solid #c99555;
+}
+
+.pan {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 18%;
+  height: 22%;
+  border-radius: 40% / 18%;
+  background: linear-gradient(180deg, #b8bec6 0%, #7a828c 40%, #5a626c 100%);
+  box-shadow:
+    inset 0 10px 18px rgba(255, 255, 255, 0.25),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.25),
+    0 10px 20px rgba(0, 0, 0, 0.18);
+  border: 3px solid #5a626c;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+/* —— Cookie —— */
+.cookie {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  margin-left: -36px;
+  margin-top: -36px;
+  opacity: 1;
+  transform: scale(0.5);
+  z-index: 6;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.cookie__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.18));
+}
+
+.cookie.is-dropping {
+  animation: cookie-drop 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+}
+
+.cookie.is-baking {
+  opacity: 1;
+  animation: cookie-bake 3.2s ease-in-out both;
+}
+
+.cookie.is-ready {
+  opacity: 1;
+  transform: scale(1);
+  animation: cookie-ready 0.55s ease both;
+}
+
+.cookie.is-eaten {
+  animation: cookie-eaten 0.55s ease forwards;
+  pointer-events: none;
+}
+
+/* —— Ice cream —— */
+.icecream {
+  position: absolute;
+  width: 64px;
+  height: 84px;
+  margin-left: -32px;
+  margin-top: -52px;
+  opacity: 1;
+  transform: scale(0.55);
+  z-index: 6;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.icecream__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.16));
+}
+
+.icecream.is-dropping {
+  animation: ice-drop 0.5s cubic-bezier(0.2, 0.85, 0.3, 1.15) both;
+}
+
+.icecream.is-ready {
+  opacity: 1;
+  transform: scale(1);
+  animation: ice-ready 0.7s ease both;
+}
+
+.icecream.is-eaten {
+  animation: ice-eaten 0.55s ease forwards;
+}
+
+/* —— Baby —— */
+.baby {
+  position: absolute;
+  width: 130px;
+  height: 110px;
+  margin-left: -65px;
+  margin-top: -90px;
+  left: 0;
+  top: 0;
+  z-index: 8;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.baby__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.15));
+  transform-origin: 50% 90%;
+}
+
+.baby.is-crawling-in .baby__svg,
+.baby.is-crawling-out .baby__svg {
+  animation: crawl-wiggle 0.28s ease-in-out infinite;
+}
+
+.baby.is-munching .baby__svg {
+  animation: munch-bob 0.22s ease-in-out infinite;
+}
+
+/* —— HUD —— */
+.hud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.75rem 1rem;
+  pointer-events: none;
+}
+
+.hud__hint {
+  margin: 0;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(120, 40, 70, 0.35), 0 4px 12px rgba(120, 40, 70, 0.25);
+  opacity: 0.95;
+  animation: hint-pulse 2s ease-in-out infinite;
+}
+
+.hud__exit {
+  pointer-events: auto;
+  appearance: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  color: rgba(58, 42, 26, 0.55);
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.hud__exit:hover,
+.hud__exit:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.85);
+  outline: none;
+}
+
+/* —— Animations —— */
+@keyframes cookie-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-80px) scale(0.2) rotate(-20deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(8px) scale(0.55) rotate(8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(0.5) rotate(0deg);
+  }
+}
+
+@keyframes cookie-bake {
+  0% {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(0.72);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes cookie-ready {
+  0% { opacity: 1; transform: scale(1); }
+  40% { opacity: 1; transform: scale(1.14); }
+  70% { opacity: 1; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cookie-eaten {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.15) translateY(16px); }
+}
+
+@keyframes ice-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.2) rotate(-12deg);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(10px) scale(0.95) rotate(6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes ice-ready {
+  0% { transform: scale(1) rotate(0deg); }
+  30% { transform: scale(1.1) rotate(-4deg); }
+  60% { transform: scale(0.96) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes ice-eaten {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.12) translateY(18px); }
+}
+
+@keyframes crawl-wiggle {
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50% { transform: rotate(4deg) translateY(-4px); }
+}
+
+@keyframes munch-bob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(4px) scale(1.04); }
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud__hint,
+  .baby.is-crawling-in .baby__svg,
+  .baby.is-crawling-out .baby__svg,
+  .baby.is-munching .baby__svg {
+    animation: none;
+  }
+}

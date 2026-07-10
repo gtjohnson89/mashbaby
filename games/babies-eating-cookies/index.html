@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Babies Eating Cookies · mashbaby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+  <div id="start-gate" class="gate">
+    <div class="gate__card">
+      <p class="gate__brand">mashbaby</p>
+      <h1 class="gate__title">Babies Eating Cookies</h1>
+      <p class="gate__copy">Mash any key for cookies and ice cream. Babies crawl in and munch them up!</p>
+      <button id="start-btn" class="gate__btn" type="button">Play Full Screen</button>
+      <p class="gate__parent">Parent tip: hold <kbd>Esc</kbd> for 2 seconds to exit</p>
+    </div>
+  </div>
+
+  <div id="game-root" class="game" hidden>
+    <div class="walls" aria-hidden="true"></div>
+    <div class="kitchen" aria-hidden="true">
+      <div class="shelf"></div>
+      <div class="oven">
+        <div class="oven__window"></div>
+        <div class="oven__knob oven__knob--l"></div>
+        <div class="oven__knob oven__knob--r"></div>
+        <div class="oven__handle"></div>
+      </div>
+      <div class="freezer">
+        <div class="freezer__door"></div>
+        <div class="freezer__handle"></div>
+        <div class="freezer__label">ICE</div>
+      </div>
+      <div class="floor"></div>
+      <div class="pan" id="cookie-pan"></div>
+    </div>
+
+    <div id="stage" class="stage" aria-live="polite"></div>
+
+    <div class="hud">
+      <p class="hud__hint" id="hint">Mash any key!</p>
+      <button id="exit-btn" class="hud__exit" type="button" title="Hold Esc to exit">Exit</button>
+    </div>
+  </div>
+
+  <script src="sounds.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

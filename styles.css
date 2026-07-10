@@ -1,0 +1,187 @@
+:root {
+  --cream: #fff6e8;
+  --butter: #ffe4b0;
+  --cookie: #c47a3a;
+  --cookie-dark: #8b4a1f;
+  --sky: #7ec8ff;
+  --sky-deep: #4aa8ef;
+  --grass: #7bc96f;
+  --blush: #ff8fab;
+  --ink: #3a2a1a;
+  --card: #ffffff;
+  --shadow: rgba(58, 42, 26, 0.18);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  height: 100%;
+}
+
+body.dashboard {
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+.dash-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, #fff1c9 0%, transparent 55%),
+    radial-gradient(ellipse 70% 45% at 85% 15%, #c9e9ff 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 90%, #d4f5c8 0%, transparent 55%),
+    linear-gradient(165deg, #fff8ee 0%, #e8f4ff 45%, #f0ffe8 100%);
+}
+
+.dash-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 28%, rgba(255, 200, 120, 0.35) 0 8px, transparent 9px),
+    radial-gradient(circle at 78% 42%, rgba(255, 150, 170, 0.3) 0 6px, transparent 7px),
+    radial-gradient(circle at 40% 70%, rgba(120, 200, 255, 0.28) 0 10px, transparent 11px),
+    radial-gradient(circle at 88% 78%, rgba(140, 220, 120, 0.3) 0 7px, transparent 8px);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.dash-main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 4vw, 2rem) 3rem;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.dash-header {
+  text-align: center;
+}
+
+.brand {
+  margin: 0;
+  font-family: "Fredoka", "Nunito", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.6rem, 9vw, 4.2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  background: linear-gradient(120deg, var(--cookie) 0%, var(--blush) 45%, var(--sky-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: brand-pop 2.8s ease-in-out infinite;
+}
+
+.tagline {
+  margin: 0.65rem 0 0;
+  font-size: clamp(1.05rem, 2.8vw, 1.25rem);
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.game-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 1.35rem 1.4rem 1.5rem;
+  border: 3px solid rgba(58, 42, 26, 0.08);
+  border-radius: 1.35rem;
+  background: var(--card);
+  box-shadow: 0 10px 0 rgba(58, 42, 26, 0.08), 0 18px 40px var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  font: inherit;
+  text-align: left;
+}
+
+.game-btn:hover:not(:disabled),
+.game-btn:focus-visible:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 0 rgba(58, 42, 26, 0.08), 0 22px 44px var(--shadow);
+  outline: none;
+}
+
+.game-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 6px 0 rgba(58, 42, 26, 0.08), 0 10px 24px var(--shadow);
+}
+
+.game-btn--cookies {
+  background: linear-gradient(160deg, #fff 0%, #fff3e0 100%);
+  border-color: rgba(196, 122, 58, 0.25);
+}
+
+.game-btn--soon {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: 0 6px 0 rgba(58, 42, 26, 0.05), 0 10px 24px rgba(58, 42, 26, 0.08);
+}
+
+.game-btn__art {
+  display: block;
+  line-height: 0;
+  margin-bottom: 0.5rem;
+}
+
+.game-btn__art--soon {
+  width: 72px;
+  height: 44px;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 30% 40%, #ffd79a 0 10px, transparent 11px),
+    radial-gradient(circle at 70% 55%, #b8e0ff 0 12px, transparent 13px),
+    linear-gradient(135deg, #f5f0ea, #e8eef5);
+}
+
+.game-btn__title {
+  font-family: "Fredoka", "Nunito", sans-serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+}
+
+.game-btn__hint {
+  font-size: 0.95rem;
+  font-weight: 700;
+  opacity: 0.65;
+}
+
+@keyframes brand-pop {
+  0%,
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.08);
+    transform: scale(1.015);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand,
+  .game-btn {
+    animation: none;
+    transition: none;
+  }
+}
