@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Describe your game · mashbaby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/studio/studio.css" />
+</head>
+<body>
+  <div class="studio">
+    <aside class="panel">
+      <header class="panel__header">
+        <a class="logo" href="/">mashbaby</a>
+        <p class="panel__sub">Describe a game. Then tweak it with your kid.</p>
+      </header>
+
+      <div id="landing" class="landing">
+        <label class="prompt-label" for="prompt">Describe your game</label>
+        <textarea id="prompt" class="prompt" rows="4" placeholder="babies eating cookies…"></textarea>
+        <button id="create-btn" class="btn" type="button">Make it!</button>
+      </div>
+
+      <div id="chat" class="chat" hidden>
+        <div id="messages" class="messages" aria-live="polite"></div>
+        <form id="tweak-form" class="tweak-form">
+          <input id="tweak" class="tweak-input" type="text" placeholder="walls pink… add a dinosaur… birds flying…" autocomplete="off" />
+          <button class="btn btn--small" type="submit">Tweak</button>
+        </form>
+        <p id="usage" class="usage"></p>
+        <p class="hint-row">
+          <button id="replay-btn" class="linkish" type="button">Reload play view</button>
+          ·
+          <a id="play-link" href="#" target="_blank" rel="noopener">Open full screen</a>
+        </p>
+      </div>
+    </aside>
+
+    <section class="stage-wrap">
+      <div id="empty-stage" class="empty-stage">
+        <p>Your game will show up here</p>
+      </div>
+      <iframe id="play-frame" class="play-frame" title="Game preview" hidden></iframe>
+    </section>
+  </div>
+  <script src="/studio/studio.js"></script>
+</body>
+</html>

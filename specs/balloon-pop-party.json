@@ -1,0 +1,25 @@
+{
+  "id": "balloon-pop-party",
+  "title": "Balloon Pop Party",
+  "brand": "mashbaby",
+  "copy": "Mash any key to inflate balloons. They float up… then POP with sparkles!",
+  "theme": {
+    "skyTop": "#7ec8ff",
+    "skyBot": "#c9e9ff",
+    "grassColor": "#6fbf5a",
+    "accent": "#e85a8a",
+    "gateBtnFrom": "#ff6b9d",
+    "gateBtnTo": "#5ab0ff"
+  },
+  "scene": { "template": "sky-pop", "props": {} },
+  "onMash": [{ "kind": "balloon", "weight": 100 }],
+  "actors": [],
+  "ambient": [{ "kind": "clouds", "count": 3 }],
+  "limits": { "maxSpawns": 14, "spawnCooldownMs": 90 },
+  "customEntities": {},
+  "customize": {
+    "persist": true,
+    "skyPalette": true,
+    "grassPalette": true
+  }
+}

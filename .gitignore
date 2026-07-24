@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+server/mash.db
+.DS_Store
+node_modules/
+.env
+*.egg-info/

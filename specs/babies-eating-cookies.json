@@ -1,0 +1,42 @@
+{
+  "id": "babies-eating-cookies",
+  "title": "Babies Eating Cookies",
+  "brand": "mashbaby",
+  "copy": "Mash any key for cookies and ice cream. Babies crawl in and munch them up!",
+  "theme": {
+    "wallColor": "#1a1218",
+    "wallDotColors": ["#ff9ec5", "#c49bff"],
+    "floorColor": "#f0c98a",
+    "floorLine": "#e0b56e",
+    "accent": "#d45a7a",
+    "gateBtnFrom": "#e08940",
+    "gateBtnTo": "#d45a7a"
+  },
+  "scene": { "template": "kitchen-mash", "props": {} },
+  "onMash": [
+    { "kind": "cookie", "weight": 65 },
+    { "kind": "icecream", "weight": 35 }
+  ],
+  "actors": [{ "kind": "baby", "behavior": "seek_and_munch", "max": 8 }],
+  "ambient": [],
+  "limits": { "maxSpawns": 18, "spawnCooldownMs": 90 },
+  "customEntities": {},
+  "customize": {
+    "persist": true,
+    "wallPalette": true,
+    "toggles": [
+      {
+        "id": "dotStyle",
+        "label": "✨",
+        "corner": "top-left",
+        "themeKeys": ["wallDotColors"],
+        "options": [
+          ["#ff9ec5", "#c49bff"],
+          ["#ffe066", "#ff9ec5"],
+          ["#7ec8ff", "#c49bff"],
+          ["#7bc96f", "#ffe066"]
+        ]
+      }
+    ]
+  }
+}

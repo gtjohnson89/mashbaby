@@ -1,0 +1,27 @@
+{
+  "id": "duck-pond-splash",
+  "title": "Duck Pond Splash",
+  "brand": "mashbaby",
+  "copy": "Mash any key — ducks plop into the pond, splash around, and quack!",
+  "theme": {
+    "skyTop": "#9ad4ff",
+    "skyBot": "#e8f6ff",
+    "grassColor": "#7bc96f",
+    "waterColor": "#4aa8d8",
+    "waterDeep": "#2f7fad",
+    "accent": "#2f7fad",
+    "gateBtnFrom": "#4aa8d8",
+    "gateBtnTo": "#6fbf5a"
+  },
+  "scene": { "template": "pond-splash", "props": {} },
+  "onMash": [{ "kind": "duck", "weight": 100 }],
+  "actors": [],
+  "ambient": [],
+  "limits": { "maxSpawns": 10, "spawnCooldownMs": 100 },
+  "customEntities": {},
+  "customize": {
+    "persist": true,
+    "skyPalette": true,
+    "waterPalette": true
+  }
+}

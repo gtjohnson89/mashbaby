@@ -1,0 +1,415 @@
+:root {
+  --ink: #243028;
+  --sky-top: #9ad4ff;
+  --sky-bot: #e8f6ff;
+  --water: #4aa8d8;
+  --water-deep: #2f7fad;
+  --bank: #7bc96f;
+  --bank-dark: #5aa34f;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Nunito", system-ui, sans-serif;
+  background: #163040;
+  color: var(--ink);
+  touch-action: manipulation;
+}
+
+.gate {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(ellipse at 30% 20%, #ffe8a8 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 75%, #a8e0ff 0%, transparent 45%),
+    linear-gradient(160deg, #fff8ee, #dff4ff);
+  z-index: 50;
+}
+
+.gate[hidden],
+.game[hidden] {
+  display: none !important;
+}
+
+.gate__card {
+  max-width: 420px;
+  text-align: center;
+  padding: 2rem 1.75rem;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 48px rgba(36, 48, 40, 0.16);
+}
+
+.gate__brand {
+  margin: 0;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #2f7fad;
+}
+
+.gate__title {
+  margin: 0.4rem 0 0.75rem;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 6vw, 2.4rem);
+  line-height: 1.15;
+}
+
+.gate__copy {
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+.gate__btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding: 0.9rem 1.75rem;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, #4aa8d8, #6fbf5a);
+  box-shadow: 0 8px 0 #2f7fad, 0 12px 28px rgba(74, 168, 216, 0.35);
+  transition: transform 0.12s ease;
+}
+
+.gate__btn:hover {
+  transform: translateY(-2px);
+}
+
+.gate__btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 3px 0 #2f7fad, 0 6px 16px rgba(74, 168, 216, 0.3);
+}
+
+.gate__parent {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+.gate__parent kbd {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  border-radius: 0.35em;
+  background: #eee4d4;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+.game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: none;
+}
+
+.sky {
+  position: absolute;
+  inset: 0 0 55% 0;
+  background: linear-gradient(180deg, var(--sky-top), var(--sky-bot));
+}
+
+.sun {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: min(80px, 12vw);
+  height: min(80px, 12vw);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff6b0, #ffd040);
+  box-shadow: 0 0 36px rgba(255, 200, 60, 0.5);
+}
+
+.cloud {
+  position: absolute;
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: 18px 8px 0 #fff, -16px 10px 0 #fff, 6px -8px 0 #fff;
+  opacity: 0.92;
+}
+
+.cloud--1 {
+  width: 64px;
+  height: 24px;
+  top: 16%;
+  right: 18%;
+  animation: drift 20s ease-in-out infinite;
+}
+
+.cloud--2 {
+  width: 80px;
+  height: 28px;
+  top: 28%;
+  right: 40%;
+  animation: drift 24s ease-in-out infinite reverse;
+}
+
+.bank {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 14%;
+  background: linear-gradient(180deg, var(--bank), var(--bank-dark));
+}
+
+.bank--back {
+  top: 42%;
+  height: 10%;
+  border-radius: 0 0 40% 40% / 0 0 30% 30%;
+  z-index: 1;
+}
+
+.bank--front {
+  bottom: 0;
+  height: 12%;
+  z-index: 4;
+  box-shadow: 0 -4px 0 rgba(255, 255, 255, 0.15);
+}
+
+.pond {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 48%;
+  bottom: 10%;
+  background:
+    radial-gradient(ellipse 80% 40% at 30% 30%, rgba(255, 255, 255, 0.22), transparent 50%),
+    linear-gradient(180deg, #6ec4e8 0%, var(--water) 40%, var(--water-deep) 100%);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.pond::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      95deg,
+      transparent 0 40px,
+      rgba(255, 255, 255, 0.06) 40px 44px
+    );
+  animation: shimmer 6s linear infinite;
+  pointer-events: none;
+}
+
+.lily {
+  position: absolute;
+  width: 42px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 40%, #8fd46a, #4f9a3a);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12);
+}
+
+.lily::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 14px;
+  height: 3px;
+  background: #fff;
+  border-radius: 999px;
+  opacity: 0.35;
+  transform: translate(-50%, -50%) rotate(-20deg);
+}
+
+.lily--1 { left: 18%; top: 28%; }
+.lily--2 { left: 62%; top: 48%; width: 36px; height: 24px; }
+.lily--3 { left: 40%; top: 68%; width: 48px; height: 30px; }
+
+.reed {
+  position: absolute;
+  bottom: 70%;
+  width: 8px;
+  height: 70px;
+  background: linear-gradient(180deg, #6fbf5a, #3d7a32);
+  border-radius: 4px 4px 0 0;
+  transform-origin: bottom center;
+  animation: sway 3.2s ease-in-out infinite;
+}
+
+.reed::before,
+.reed::after {
+  content: "";
+  position: absolute;
+  bottom: 20%;
+  width: 22px;
+  height: 10px;
+  background: #6fbf5a;
+  border-radius: 50%;
+}
+
+.reed::before { left: -16px; transform: rotate(-25deg); }
+.reed::after { right: -16px; transform: rotate(25deg); }
+
+.reed--1 { left: 8%; animation-delay: 0s; }
+.reed--2 { left: 78%; height: 85px; animation-delay: 0.6s; }
+.reed--3 { left: 88%; height: 60px; animation-delay: 1.1s; }
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.duck {
+  position: absolute;
+  width: 110px;
+  height: 90px;
+  margin-left: -55px;
+  margin-top: -70px;
+  left: 0;
+  top: 0;
+  z-index: 6;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.duck__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 5px 3px rgba(0, 0, 0, 0.18));
+  transform-origin: 50% 80%;
+}
+
+.duck.is-dropping .duck__svg {
+  animation: drop-in 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.15) both;
+}
+
+.duck.is-swimming .duck__svg {
+  animation: swim-bob 0.55s ease-in-out infinite;
+}
+
+.ripple {
+  position: absolute;
+  width: 20px;
+  height: 12px;
+  margin-left: -10px;
+  margin-top: -6px;
+  border: 3px solid rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  z-index: 5;
+  pointer-events: none;
+  animation: ripple-out 0.7s ease-out forwards;
+}
+
+.hud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.75rem 1rem;
+  pointer-events: none;
+}
+
+.hud__hint {
+  margin: 0;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(30, 80, 120, 0.35), 0 4px 12px rgba(30, 80, 120, 0.25);
+  animation: hint-pulse 2s ease-in-out infinite;
+}
+
+.hud__exit {
+  pointer-events: auto;
+  appearance: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  color: rgba(36, 48, 40, 0.55);
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.hud__exit:hover,
+.hud__exit:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.85);
+  outline: none;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(24px); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(44px); }
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes drop-in {
+  0% { transform: translateY(-90px) scale(0.4) rotate(-12deg); opacity: 0; }
+  70% { transform: translateY(8px) scale(1.05) rotate(4deg); opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes swim-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-5px) rotate(3deg); }
+}
+
+@keyframes ripple-out {
+  0% { opacity: 0.8; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(3.2); }
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud,
+  .reed,
+  .pond::before,
+  .hud__hint,
+  .duck.is-swimming .duck__svg {
+    animation: none;
+  }
+}

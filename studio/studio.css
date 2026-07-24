@@ -1,0 +1,256 @@
+:root {
+  --ink: #3a2a1a;
+  --cream: #fff8ee;
+  --card: #ffffff;
+  --accent: #ff6b9d;
+  --sky: #5ab0ff;
+  --shadow: rgba(58, 42, 26, 0.14);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--cream);
+}
+
+.studio {
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) 1fr;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 1.5rem;
+  background:
+    radial-gradient(ellipse at 20% 0%, #ffe0f0 0%, transparent 55%),
+    linear-gradient(180deg, #fff 0%, #fff8ee 100%);
+  border-right: 1px solid rgba(58, 42, 26, 0.08);
+  overflow: auto;
+}
+
+.logo {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: 1.75rem;
+  text-decoration: none;
+  background: linear-gradient(120deg, #c47a3a, #ff6b9d, #5ab0ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.panel__sub {
+  margin: 0.35rem 0 0;
+  font-weight: 700;
+  opacity: 0.65;
+  font-size: 0.95rem;
+}
+
+.prompt-label {
+  display: block;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.prompt,
+.tweak-input {
+  width: 100%;
+  font: inherit;
+  font-weight: 700;
+  border: 3px solid rgba(58, 42, 26, 0.1);
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  background: var(--card);
+  color: inherit;
+  resize: vertical;
+}
+
+.prompt:focus,
+.tweak-input:focus {
+  outline: none;
+  border-color: rgba(90, 176, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(90, 176, 255, 0.15);
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--sky));
+  box-shadow: 0 8px 0 #c44a72, 0 12px 24px rgba(255, 107, 157, 0.28);
+  margin-top: 0.85rem;
+  width: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #c44a72;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: wait;
+  transform: none;
+}
+
+.btn--small {
+  width: auto;
+  margin: 0;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  box-shadow: 0 5px 0 #c44a72;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.messages {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding-right: 0.25rem;
+  max-height: 50vh;
+}
+
+.bubble {
+  padding: 0.75rem 0.9rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  max-width: 95%;
+}
+
+.bubble--user {
+  align-self: flex-end;
+  background: #e8f4ff;
+  border: 2px solid rgba(90, 176, 255, 0.25);
+}
+
+.bubble--bot {
+  align-self: flex-start;
+  background: #fff;
+  border: 2px solid rgba(58, 42, 26, 0.08);
+  box-shadow: 0 6px 16px var(--shadow);
+}
+
+.bubble__meta {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  opacity: 0.55;
+}
+
+.tweak-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.tweak-form .tweak-input {
+  flex: 1;
+}
+
+.usage {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+.hint-row {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.linkish {
+  appearance: none;
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 800;
+  color: var(--sky);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.hint-row a {
+  color: var(--sky);
+  font-weight: 800;
+}
+
+.stage-wrap {
+  position: relative;
+  background: #1a2030;
+  min-height: 280px;
+}
+
+.empty-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: "Fredoka", sans-serif;
+  font-size: 1.25rem;
+}
+
+.play-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #1a120c;
+}
+
+@media (max-width: 860px) {
+  .studio {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(45vh, 1fr);
+  }
+
+  .panel {
+    border-right: none;
+    border-bottom: 1px solid rgba(58, 42, 26, 0.08);
+    max-height: 55vh;
+  }
+
+  .messages {
+    max-height: 28vh;
+  }
+}

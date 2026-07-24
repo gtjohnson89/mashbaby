@@ -1,0 +1,340 @@
+:root {
+  --ink: #2a3040;
+  --sky-top: #7ec8ff;
+  --sky-bot: #c9e9ff;
+  --grass: #6fbf5a;
+  --grass-dark: #4f9a3a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Nunito", system-ui, sans-serif;
+  background: #1a2030;
+  color: var(--ink);
+  touch-action: manipulation;
+}
+
+.gate {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(ellipse at 25% 20%, #ffd0e8 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, #b8e4ff 0%, transparent 45%),
+    linear-gradient(160deg, #fff8ee, #e0f4ff);
+  z-index: 50;
+}
+
+.gate[hidden],
+.game[hidden] {
+  display: none !important;
+}
+
+.gate__card {
+  max-width: 420px;
+  text-align: center;
+  padding: 2rem 1.75rem;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 1.5rem;
+  box-shadow: 0 16px 48px rgba(42, 48, 64, 0.16);
+}
+
+.gate__brand {
+  margin: 0;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #e85a8a;
+}
+
+.gate__title {
+  margin: 0.4rem 0 0.75rem;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.8rem, 6vw, 2.4rem);
+  line-height: 1.15;
+}
+
+.gate__copy {
+  margin: 0 0 1.5rem;
+  font-weight: 700;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+.gate__btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding: 0.9rem 1.75rem;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff6b9d, #5ab0ff);
+  box-shadow: 0 8px 0 #c44a72, 0 12px 28px rgba(90, 176, 255, 0.35);
+  transition: transform 0.12s ease;
+}
+
+.gate__btn:hover {
+  transform: translateY(-2px);
+}
+
+.gate__btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 3px 0 #c44a72, 0 6px 16px rgba(90, 176, 255, 0.3);
+}
+
+.gate__parent {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  opacity: 0.55;
+}
+
+.gate__parent kbd {
+  display: inline-block;
+  padding: 0.1em 0.4em;
+  border-radius: 0.35em;
+  background: #eee4d4;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+.game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: none;
+}
+
+.sky {
+  position: absolute;
+  inset: 0 0 18% 0;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bot) 70%, #e8f8ff 100%);
+}
+
+.sun {
+  position: absolute;
+  top: 8%;
+  right: 12%;
+  width: min(90px, 14vw);
+  height: min(90px, 14vw);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff6a8, #ffd24a 55%, #ffb020);
+  box-shadow: 0 0 40px rgba(255, 200, 60, 0.55);
+}
+
+.cloud {
+  position: absolute;
+  background: #fff;
+  border-radius: 999px;
+  opacity: 0.9;
+  box-shadow: 20px 10px 0 #fff, -18px 12px 0 #fff, 8px -10px 0 #fff;
+}
+
+.cloud--1 {
+  width: 70px;
+  height: 28px;
+  top: 18%;
+  left: 12%;
+  animation: drift 18s ease-in-out infinite;
+}
+
+.cloud--2 {
+  width: 90px;
+  height: 34px;
+  top: 28%;
+  left: 55%;
+  animation: drift 22s ease-in-out infinite reverse;
+}
+
+.cloud--3 {
+  width: 60px;
+  height: 24px;
+  top: 12%;
+  left: 72%;
+  animation: drift 16s ease-in-out infinite;
+}
+
+.grass {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20%;
+  background:
+    linear-gradient(180deg, var(--grass) 0%, var(--grass-dark) 100%);
+  border-top: 6px solid #8fd46a;
+}
+
+.grass::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -14px;
+  height: 28px;
+  background:
+    radial-gradient(ellipse 18px 16px at 8% 100%, var(--grass) 0 70%, transparent 71%),
+    radial-gradient(ellipse 22px 18px at 22% 100%, var(--grass) 0 70%, transparent 71%),
+    radial-gradient(ellipse 16px 14px at 38% 100%, var(--grass) 0 70%, transparent 71%),
+    radial-gradient(ellipse 24px 18px at 55% 100%, var(--grass) 0 70%, transparent 71%),
+    radial-gradient(ellipse 18px 15px at 72% 100%, var(--grass) 0 70%, transparent 71%),
+    radial-gradient(ellipse 20px 17px at 88% 100%, var(--grass) 0 70%, transparent 71%);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.balloon {
+  position: absolute;
+  width: 90px;
+  height: 120px;
+  margin-left: -45px;
+  margin-top: -100px;
+  left: 0;
+  top: 0;
+  z-index: 6;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.balloon__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.16));
+  transform-origin: 50% 90%;
+}
+
+.balloon.is-inflating .balloon__svg {
+  animation: inflate 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.balloon.is-floating .balloon__svg {
+  animation: bob 0.7s ease-in-out infinite;
+}
+
+.balloon.is-popping {
+  animation: pop-away 0.35s ease forwards;
+}
+
+.spark {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  z-index: 7;
+  pointer-events: none;
+  animation: spark-fly 0.55s ease-out forwards;
+}
+
+.hud {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.75rem 1rem;
+  pointer-events: none;
+}
+
+.hud__hint {
+  margin: 0;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 600;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(40, 80, 140, 0.35), 0 4px 12px rgba(40, 80, 140, 0.25);
+  animation: hint-pulse 2s ease-in-out infinite;
+}
+
+.hud__exit {
+  pointer-events: auto;
+  appearance: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  color: rgba(42, 48, 64, 0.55);
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.35;
+  transition: opacity 0.2s;
+}
+
+.hud__exit:hover,
+.hud__exit:focus-visible {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.85);
+  outline: none;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(28px); }
+}
+
+@keyframes inflate {
+  0% { transform: scale(0.15); opacity: 0.4; }
+  70% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bob {
+  0%, 100% { transform: rotate(-3deg) translateY(0); }
+  50% { transform: rotate(3deg) translateY(-6px); }
+}
+
+@keyframes pop-away {
+  0% { opacity: 1; transform: scale(1); }
+  40% { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 0; transform: scale(0.1); }
+}
+
+@keyframes spark-fly {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.2); }
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud,
+  .hud__hint,
+  .balloon.is-floating .balloon__svg {
+    animation: none;
+  }
+}

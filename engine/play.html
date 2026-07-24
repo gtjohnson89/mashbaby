@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Play · mashbaby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="sounds.js"></script>
+  <script src="motion.js"></script>
+  <script src="entities.js"></script>
+  <script src="scene.js"></script>
+  <script src="spawn.js"></script>
+  <script src="ambient.js"></script>
+  <script src="customize.js"></script>
+  <script src="wishes.js"></script>
+  <script src="validate.js"></script>
+  <script src="runtime.js"></script>
+  <script>
+    // Crash-proof: boot always sanitizes / falls back to a playable game.
+    MashBoot.bootFromQuery(document.getElementById("app")).catch(function () {
+      var mount = document.getElementById("app");
+      var rt = new MashRuntime({
+        spec: MashValidate.sanitize(MashValidate.FALLBACK_SPEC),
+        mount: mount,
+        onExit: function () {
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: "mash:exit" }, "*");
+          } else {
+            window.location.href = "../index.html";
+          }
+        },
+      });
+      rt.mountUI();
+      window.mashRuntime = rt;
+    });
+  </script>
+</body>
+</html>
