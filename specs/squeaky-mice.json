@@ -1,0 +1,25 @@
+{
+  "id": "squeaky-mice",
+  "title": "Squeaky Mice",
+  "brand": "mashbaby",
+  "copy": "Mash any key — mice peek out, scurry to the cheese, squeak and nibble!",
+  "theme": {
+    "wallColor": "#fff3e6",
+    "wallDotColors": ["#ffe066", "#ff9ec5"],
+    "floorColor": "#c89868",
+    "floorLine": "#a87848",
+    "accent": "#ffe066",
+    "gateBtnFrom": "#ffe066",
+    "gateBtnTo": "#ff9ec5"
+  },
+  "scene": { "template": "pantry-nibble", "props": {} },
+  "onMash": [{ "kind": "mouse", "weight": 100 }],
+  "actors": [],
+  "ambient": [{ "kind": "sparkles", "count": 2 }],
+  "limits": { "maxSpawns": 12, "spawnCooldownMs": 100 },
+  "customEntities": {},
+  "customize": {
+    "persist": true,
+    "wallPalette": true
+  }
+}

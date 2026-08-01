@@ -91,11 +91,48 @@
       </div>`;
   }
 
+  function pantry(theme) {
+    const ice = (a, b, c) => {
+      const scoops = c
+        ? `<circle cx="16" cy="28" r="9" fill="${a}"/>
+           <circle cx="24" cy="24" r="8" fill="${b}"/>
+           <circle cx="20" cy="14" r="8" fill="${c}"/>`
+        : `<circle cx="18" cy="28" r="9" fill="${a}"/>
+           <circle cx="22" cy="18" r="9" fill="${b}"/>`;
+      return `<svg class="shelf-ice__svg" viewBox="0 0 40 52" aria-hidden="true">
+        <path d="M12 32 L20 50 L28 32 Z" fill="#f2c78a"/>
+        ${scoops}
+      </svg>`;
+    };
+    return `
+      <div class="pantry-scene" aria-hidden="true">
+        <div class="pantry-walls"></div>
+        <div class="pantry-shelf pantry-shelf--top"></div>
+        <div class="pantry-shelf-ice pantry-shelf-ice--top">
+          <div class="shelf-ice">${ice("#ff9ec5", "#c49bff", "#fff6e0")}</div>
+          <div class="shelf-ice">${ice("#a8e6ff", "#5ab0ff", "")}</div>
+          <div class="shelf-ice">${ice("#b8e986", "#ffe066", "#ff9ec5")}</div>
+          <div class="shelf-ice">${ice("#c49bff", "#ff8fab", "")}</div>
+        </div>
+        <div class="pantry-shelf pantry-shelf--mid"></div>
+        <div class="pantry-shelf-ice pantry-shelf-ice--mid">
+          <div class="shelf-ice shelf-ice--sm">${ice("#ffe066", "#ff9a5a", "")}</div>
+          <div class="shelf-ice shelf-ice--sm">${ice("#ff9ec5", "#fff0f6", "#c49bff")}</div>
+          <div class="shelf-ice shelf-ice--sm">${ice("#7ec8ff", "#d4a5ff", "")}</div>
+        </div>
+        <div class="cheese-wheel"></div>
+        <div class="mouse-hole mouse-hole--l"></div>
+        <div class="mouse-hole mouse-hole--r"></div>
+        <div class="pantry-floor" data-spawn-zone="floor"></div>
+      </div>`;
+  }
+
   const TEMPLATES = {
     "kitchen-mash": kitchen,
     "sky-pop": sky,
     "pond-splash": pond,
     "blank-room": blank,
+    "pantry-nibble": pantry,
   };
 
   function render(container, spec) {

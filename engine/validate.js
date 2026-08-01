@@ -37,6 +37,7 @@
     "sky-pop": true,
     "pond-splash": true,
     "blank-room": true,
+    "pantry-nibble": true,
   };
 
   const KNOWN_SPAWN_KINDS = {
@@ -44,6 +45,7 @@
     icecream: true,
     balloon: true,
     duck: true,
+    mouse: true,
     ball: true,
     star: true,
   };

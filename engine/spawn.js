@@ -217,6 +217,78 @@
     }, 450);
   }
 
+  function spawnScurryNibble(ctx, kind, meta) {
+    const p = zoneRect(ctx.spawnZone, ctx.root);
+    const fromLeft = Math.random() < 0.5;
+    const face = fromLeft ? 1 : -1;
+    const holeX = fromLeft ? p.left + p.width * 0.08 : p.left + p.width * 0.92;
+    const holeY = p.top + p.height * 0.55;
+    const nibbleX = p.left + rand(p.width * 0.32, p.width * 0.68);
+    const nibbleY = p.top + rand(p.height * 0.2, p.height * 0.55);
+    const exitX = fromLeft ? p.left + p.width + 60 : p.left - 60;
+    const exitY = holeY + rand(-20, 25);
+    const html = kind === "mouse" ? MashEntities.render("mouse") : customHtml(meta);
+    const el = makeEl(meta, html, holeX, holeY, "transform");
+    el.style.transform = `translate(${holeX}px, ${holeY + 40}px) scaleX(${face})`;
+    el.classList.add("is-dropping");
+    ctx.stage.appendChild(el);
+    ctx.spawnCount += 1;
+    if (meta.soundSpawn) MashSounds.play(meta.soundSpawn);
+
+    window.setTimeout(() => {
+      if (!el.isConnected) return;
+      el.classList.remove("is-dropping");
+      el.classList.add("is-scurrying");
+      const scurryMs = rand(900, 1500);
+      const anim = MashMotion.animate(
+        el,
+        [
+          { transform: `translate(${holeX}px, ${holeY}px) scaleX(${face})` },
+          { transform: `translate(${nibbleX}px, ${nibbleY}px) scaleX(${face})` },
+        ],
+        { duration: scurryMs, easing: "ease-in-out", fill: "forwards" }
+      );
+      anim.onfinish = () => {
+        if (!el.isConnected) return;
+        el.classList.remove("is-scurrying");
+        el.classList.add("is-nibbling");
+        if (meta.soundInteract) {
+          MashSounds.play(meta.soundInteract);
+          window.setTimeout(() => MashSounds.play(meta.soundInteract), 280);
+        }
+        for (let i = 0; i < 5; i++) {
+          const crumb = document.createElement("div");
+          crumb.className = "crumb";
+          crumb.style.left = `${nibbleX + rand(-12, 12)}px`;
+          crumb.style.top = `${nibbleY + rand(-4, 10)}px`;
+          crumb.style.setProperty("--dx", `${rand(-10, 14)}px`);
+          crumb.style.setProperty("--dy", `${rand(-18, -6)}px`);
+          ctx.stage.appendChild(crumb);
+          window.setTimeout(() => crumb.remove(), 800);
+        }
+        window.setTimeout(() => {
+          if (!el.isConnected) return;
+          el.classList.remove("is-nibbling");
+          el.classList.add("is-scurrying");
+          MashSounds.play("squeak");
+          const outMs = rand(800, 1300);
+          const outAnim = MashMotion.animate(
+            el,
+            [
+              { transform: `translate(${nibbleX}px, ${nibbleY}px) scaleX(${face})` },
+              { transform: `translate(${exitX}px, ${exitY}px) scaleX(${face})` },
+            ],
+            { duration: outMs, easing: "ease-in", fill: "forwards" }
+          );
+          outAnim.onfinish = () => {
+            if (el.isConnected) el.remove();
+            ctx.spawnCount = Math.max(0, ctx.spawnCount - 1);
+          };
+        }, 900);
+      };
+    }, 380);
+  }
+
   function spawnOne(ctx, kind) {
     const meta = MashEntities.meta(kind, ctx.spec.customEntities);
     if (!meta) return null;
@@ -224,6 +296,7 @@
     if (behavior === "bake_ready") return spawnBakeReady(ctx, kind, meta);
     if (behavior === "float_pop") return spawnFloatPop(ctx, kind, meta);
     if (behavior === "splash_swim") return spawnSplashSwim(ctx, kind, meta);
+    if (behavior === "scurry_nibble") return spawnScurryNibble(ctx, kind, meta);
     return spawnDropReady(ctx, kind, meta);
   }
 

@@ -70,6 +70,7 @@ Studio invents packs; it is not the customer product. Customer co-creation lives
 | Babies Eating Cookies | `specs/babies-eating-cookies.json` |
 | Balloon Pop Party | `specs/balloon-pop-party.json` |
 | Duck Pond Splash | `specs/duck-pond-splash.json` |
+| Squeaky Mice | `specs/squeaky-mice.json` |
 
 Parent controls in play (top-right strip):
 - **Wish ★** — hold **~2 seconds** to open the parent Wish box; mash play ignores the overlay

@@ -11,6 +11,7 @@ SPAWNS = {
     },
     "balloon": {"role": "spawn", "behavior": "float_pop", "labels": ["balloon", "balloons"]},
     "duck": {"role": "spawn", "behavior": "splash_swim", "labels": ["duck", "ducks", "duckling"]},
+    "mouse": {"role": "spawn", "behavior": "scurry_nibble", "labels": ["mouse", "mice", "squeak", "cheese"]},
     "ball": {"role": "spawn", "behavior": "drop_ready", "labels": ["ball", "balls"]},
     "star": {"role": "spawn", "behavior": "drop_ready", "labels": ["star", "stars"]},
 }
@@ -120,6 +121,27 @@ TEMPLATES = {
             "limits": {"maxSpawns": 10, "spawnCooldownMs": 100},
             "customEntities": {},
             "customize": {"persist": True, "skyPalette": True, "waterPalette": True},
+        },
+    },
+    "pantry-nibble": {
+        "keywords": ["mouse", "mice", "cheese", "squeak", "nibble", "pantry"],
+        "default_spec": {
+            "scene": {"template": "pantry-nibble", "props": {}},
+            "theme": {
+                "wallColor": "#fff3e6",
+                "wallDotColors": ["#ffe066", "#ff9ec5"],
+                "floorColor": "#c89868",
+                "floorLine": "#a87848",
+                "accent": "#ffe066",
+                "gateBtnFrom": "#ffe066",
+                "gateBtnTo": "#ff9ec5",
+            },
+            "onMash": [{"kind": "mouse", "weight": 100}],
+            "actors": [],
+            "ambient": [{"kind": "sparkles", "count": 2}],
+            "limits": {"maxSpawns": 12, "spawnCooldownMs": 100},
+            "customEntities": {},
+            "customize": {"persist": True, "wallPalette": True},
         },
     },
     "blank-room": {

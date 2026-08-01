@@ -39,6 +39,12 @@
     { body: "#ffd24a", wing: "#e0a820", beak: "#ff7040", eye: "#2a2a2a" },
   ];
 
+  const MOUSE_LOOKS = [
+    { fur: "#9a8a82", belly: "#c8bcb4", ear: "#ff9ec5", nose: "#ff8fab", eye: "#2a2a2a" },
+    { fur: "#7a6a62", belly: "#b0a498", ear: "#c49bff", nose: "#e07888", eye: "#2a2a2a" },
+    { fur: "#b8a898", belly: "#e8ddd0", ear: "#7ec8ff", nose: "#ff9aa8", eye: "#2a2a2a" },
+  ];
+
   const DINO_LOOKS = [
     { body: "#7bc96f", belly: "#c8f0a8", spikes: "#4f9a3a", eye: "#2a2a2a" },
     { body: "#c49bff", belly: "#eee0ff", spikes: "#7a4ec4", eye: "#2a2a2a" },
@@ -96,6 +102,22 @@
       <circle cx="78" cy="36" r="18" fill="${l.body}"/>
       <circle cx="86" cy="32" r="3.2" fill="${l.eye}"/>
       <path d="M94 36 L108 34 L94 42 Z" fill="${l.beak}"/>
+    </svg>`;
+  }
+
+  function mouseSvg(look) {
+    const l = look || pick(MOUSE_LOOKS);
+    return `<svg class="ent__svg" viewBox="0 0 100 72" aria-hidden="true">
+      <ellipse cx="38" cy="48" rx="22" ry="16" fill="${l.belly}"/>
+      <ellipse cx="42" cy="44" rx="26" ry="18" fill="${l.fur}"/>
+      <circle cx="68" cy="38" r="16" fill="${l.fur}"/>
+      <circle cx="74" cy="34" r="2.8" fill="${l.eye}"/>
+      <circle cx="75" cy="33" r="1" fill="#fff"/>
+      <circle cx="82" cy="40" r="4" fill="${l.nose}"/>
+      <path d="M86 38 L94 36 L86 42 Z" fill="${l.nose}"/>
+      <ellipse cx="58" cy="22" rx="10" ry="14" fill="${l.ear}" transform="rotate(-12 58 22)"/>
+      <ellipse cx="76" cy="20" rx="10" ry="14" fill="${l.ear}" transform="rotate(12 76 20)"/>
+      <path d="M18 44 Q8 36 14 28" fill="none" stroke="${l.fur}" stroke-width="5" stroke-linecap="round"/>
     </svg>`;
   }
 
@@ -179,6 +201,7 @@
     icecream: { role: "spawn", behavior: "drop_ready", width: 64, height: 84, soundSpawn: "iceCreamDrop", soundInteract: "lick" },
     balloon: { role: "spawn", behavior: "float_pop", width: 90, height: 120, soundSpawn: "inflate", soundReady: "float", soundInteract: "pop" },
     duck: { role: "spawn", behavior: "splash_swim", width: 110, height: 90, soundSpawn: "splash", soundInteract: "quack" },
+    mouse: { role: "spawn", behavior: "scurry_nibble", width: 100, height: 72, soundSpawn: "squeak", soundInteract: "munch" },
     ball: { role: "spawn", behavior: "drop_ready", width: 64, height: 64, soundSpawn: "cookieDrop", soundInteract: "munch" },
     star: { role: "spawn", behavior: "drop_ready", width: 64, height: 64, soundSpawn: "float", soundInteract: "chirp" },
     baby: { role: "actor", behavior: "seek_and_munch", width: 130, height: 110, soundArrive: "babyArrive", soundInteract: "munch" },
@@ -201,6 +224,8 @@
         return balloonSvg(opts.palette);
       case "duck":
         return duckSvg(opts.look);
+      case "mouse":
+        return mouseSvg(opts.look);
       case "ball":
         return ballSvg();
       case "star":
@@ -248,6 +273,7 @@
     ICE_FLAVORS,
     BALLOON_PALETTES,
     DUCK_LOOKS,
+    MOUSE_LOOKS,
     DINO_LOOKS,
     PUPPY_LOOKS,
   };

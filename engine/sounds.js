@@ -425,6 +425,23 @@
     });
   }
 
+  function playSqueak() {
+    safe(() => {
+      [0, 0.06, 0.13].forEach((off) => {
+        const t = ctx.currentTime + off;
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1400 + Math.random() * 400, t);
+        osc.frequency.exponentialRampToValueAtTime(900, t + 0.05);
+        const g = envGain(0.09, 0.003, 0.02, 0.04, t);
+        osc.connect(g);
+        g.connect(master);
+        osc.start(t);
+        osc.stop(t + 0.08);
+      });
+    });
+  }
+
   const PRESETS = {
     keyPop: playKeyPop,
     softThud: playSoftThud,
@@ -442,6 +459,7 @@
     swim: playSwim,
     roar: playRoar,
     chirp: playChirp,
+    squeak: playSqueak,
   };
 
   function play(name) {

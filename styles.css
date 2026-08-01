@@ -157,6 +157,11 @@ body.dashboard {
   border-color: rgba(74, 168, 216, 0.28);
 }
 
+.game-btn--mice {
+  background: linear-gradient(160deg, #fff 0%, #fff8e8 55%, #ffe8f0 100%);
+  border-color: rgba(255, 224, 102, 0.45);
+}
+
 .game-btn__art {
   display: block;
   line-height: 0;

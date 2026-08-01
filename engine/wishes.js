@@ -36,6 +36,7 @@
     icecream: ["ice cream", "icecream", "ice-cream", "cone"],
     balloon: ["balloon", "balloons"],
     duck: ["duck", "ducks", "duckling"],
+    mouse: ["mouse", "mice", "squeak", "cheese"],
     ball: ["ball", "balls"],
     star: ["star", "stars"],
   };
