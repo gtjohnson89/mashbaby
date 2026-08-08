@@ -1,4 +1,4 @@
-# mashbaby / mashbaby
+# mashbaby
 
 Games for **1–3 year olds** — keyboard-mash, tap-anywhere play — plus an **iteration-first game engine**.
 
