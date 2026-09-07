@@ -34,6 +34,17 @@ class MashSession(Base):
     total_tokens: Mapped[int] = mapped_column(Integer, default=0)
 
 
+class SavedGame(Base):
+    __tablename__ = "saved_games"
+
+    slug: Mapped[str] = mapped_column(String(64), primary_key=True)
+    spec_json: Mapped[str] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(String(120))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    view_count: Mapped[int] = mapped_column(Integer, default=0)
+
+
 class Spell(Base):
     __tablename__ = "spellbook"
 
@@ -176,6 +187,60 @@ def spell_put(key: str, raw_text: str, patch: dict[str, Any], note: str, source:
                 )
             )
         db.commit()
+
+
+def save_game(slug: str, spec: dict[str, Any], title: str) -> None:
+    now = datetime.now(timezone.utc)
+    with SessionLocal() as db:
+        row = db.get(SavedGame, slug)
+        if row:
+            row.spec_json = json.dumps(spec)
+            row.title = title
+            row.last_seen_at = now
+        else:
+            db.add(
+                SavedGame(
+                    slug=slug,
+                    spec_json=json.dumps(spec),
+                    title=title,
+                    created_at=now,
+                    last_seen_at=now,
+                    view_count=0,
+                )
+            )
+        db.commit()
+
+
+def load_game(slug: str) -> dict[str, Any] | None:
+    with SessionLocal() as db:
+        row = db.get(SavedGame, slug)
+        if not row:
+            return None
+        row.view_count = (row.view_count or 0) + 1
+        row.last_seen_at = datetime.now(timezone.utc)
+        db.commit()
+        return {
+            "slug": row.slug,
+            "title": row.title,
+            "spec": json.loads(row.spec_json),
+            "created_at": row.created_at.isoformat() if row.created_at else None,
+            "view_count": row.view_count or 0,
+        }
+
+
+def delete_game(slug: str) -> bool:
+    with SessionLocal() as db:
+        row = db.get(SavedGame, slug)
+        if not row:
+            return False
+        db.delete(row)
+        db.commit()
+        return True
+
+
+def saved_game_exists(slug: str) -> bool:
+    with SessionLocal() as db:
+        return db.get(SavedGame, slug) is not None
 
 
 def spell_stats() -> dict[str, Any]:

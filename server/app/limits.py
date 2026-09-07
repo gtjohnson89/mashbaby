@@ -98,8 +98,11 @@ class DailyBudget:
         return max(0, self.limit - self._count)
 
 
+SAVE_PER_HOUR = _env_int("MASH_SAVE_PER_HOUR", 30)
+
 wish_window = SlidingWindow(WISH_PER_HOUR, 3600)
 llm_window = SlidingWindow(LLM_PER_HOUR, 3600)
+save_window = SlidingWindow(SAVE_PER_HOUR, 3600)
 llm_budget = DailyBudget(LLM_PER_DAY_GLOBAL)
 
 

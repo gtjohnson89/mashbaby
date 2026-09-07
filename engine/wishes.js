@@ -9,6 +9,8 @@
   const WISH_HOLD_MS = 2000;
   const STORAGE_PREFIX = "mash:wishedSpec:";
   const CREDITS_KEY = "mash:wishCredits";
+  const SAVED_GAMES_KEY = "mash:savedGames";
+  const SAVED_GAMES_MAX = 30;
   const SEED_CREDITS = 5;
   const NOVEL_COST = 1;
   const HISTORY_MAX = 8;
@@ -294,13 +296,69 @@
     }
   }
 
-  function shareUrlFor(spec) {
+  function shareUrlFor(spec, slug) {
+    if (slug) return slugUrlFor(slug);
     const token = encodeWishSpec(spec);
     const url = new URL(window.location.href);
     url.searchParams.delete("session");
     url.searchParams.delete("spec");
+    url.searchParams.delete("g");
     url.searchParams.set("wish", token);
     return url.toString();
+  }
+
+  function slugUrlFor(slug) {
+    return window.location.origin + "/g/" + slug;
+  }
+
+  function getSavedGames() {
+    try {
+      const raw = localStorage.getItem(SAVED_GAMES_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function recordSavedGame(entry) {
+    const list = getSavedGames().filter((item) => item.slug !== entry.slug);
+    list.unshift({
+      slug: entry.slug,
+      title: entry.title,
+      savedAt: entry.savedAt || Date.now(),
+      packId: entry.packId || "",
+    });
+    while (list.length > SAVED_GAMES_MAX) list.pop();
+    try {
+      localStorage.setItem(SAVED_GAMES_KEY, JSON.stringify(list));
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  function removeSavedGame(slug) {
+    const list = getSavedGames().filter((item) => item.slug !== slug);
+    try {
+      localStorage.setItem(SAVED_GAMES_KEY, JSON.stringify(list));
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  async function saveSpecToServer(spec) {
+    try {
+      const res = await fetch("/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ spec }),
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.slug || null;
+    } catch (_) {
+      return null;
+    }
   }
 
   function jarStars(n) {
@@ -354,6 +412,7 @@
       '<div class="wish-actions">' +
       '<button type="button" class="wish-btn wish-btn--ghost" id="wish-cancel">Cancel</button>' +
       '<button type="button" class="wish-btn wish-btn--ghost" id="wish-undo" hidden>Undo</button>' +
+      '<button type="button" class="wish-btn wish-btn--ghost" id="wish-save" hidden>Save</button>' +
       '<button type="button" class="wish-btn wish-btn--ghost" id="wish-share" hidden>Copy link</button>' +
       '<button type="submit" class="wish-btn wish-btn--go" id="wish-go">Wish</button>' +
       "</div>" +
@@ -372,6 +431,7 @@
     const cancelBtn = overlay.querySelector("#wish-cancel");
     const goBtn = overlay.querySelector("#wish-go");
     const undoBtn = overlay.querySelector("#wish-undo");
+    const saveBtn = overlay.querySelector("#wish-save");
     const shareBtn = overlay.querySelector("#wish-share");
     const jarStarsEl = overlay.querySelector("#wish-jar-stars");
     const jarCountEl = overlay.querySelector("#wish-jar-count");
@@ -394,6 +454,7 @@
     let holdRaf = null;
     let busy = false;
     let lastShareUrl = "";
+    let lastSavedSlug = "";
 
     function refreshJar() {
       const n = getCredits();
@@ -423,6 +484,7 @@
         refreshJar();
         refreshUndo();
         shareBtn.hidden = !lastShareUrl;
+        saveBtn.hidden = false;
         window.setTimeout(() => input.focus(), 30);
       } else {
         cancelHold();
@@ -523,6 +585,7 @@
       const prev = history.pop();
       runtime.applySpec(prev);
       persist(prev);
+      lastSavedSlug = "";
       lastShareUrl = shareUrlFor(prev);
       shareBtn.hidden = false;
       refreshUndo();
@@ -532,7 +595,7 @@
 
     shareBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
-      const url = lastShareUrl || shareUrlFor(runtime.spec);
+      const url = lastShareUrl || shareUrlFor(runtime.spec, lastSavedSlug);
       lastShareUrl = url;
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -549,6 +612,28 @@
       } catch (_) {
         showNote("Copy failed — select and copy from the address bar after wishing.", "warn");
       }
+    });
+
+    saveBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      if (busy) return;
+      busy = true;
+      saveBtn.disabled = true;
+      const slug = await saveSpecToServer(runtime.spec);
+      if (slug) {
+        lastSavedSlug = slug;
+        lastShareUrl = shareUrlFor(runtime.spec, slug);
+        recordSavedGame({
+          slug,
+          title: runtime.spec.title || "Our game",
+          packId: runtime.spec.id || "",
+        });
+        shareBtn.hidden = false;
+        showNote("Saved to Our Games!", "ok");
+        if (global.MashSounds) MashSounds.playFeedback("pop");
+      }
+      busy = false;
+      saveBtn.disabled = false;
     });
 
     overlay.addEventListener("pointerdown", (e) => {
@@ -597,9 +682,11 @@
         if (result.novel && !skipCredit) spendCredit();
         runtime.applySpec(result.spec);
         persist(result.spec);
+        lastSavedSlug = "";
         lastShareUrl = shareUrlFor(result.spec);
         try {
           const u = new URL(window.location.href);
+          u.searchParams.delete("g");
           u.searchParams.set("wish", encodeWishSpec(result.spec));
           window.history.replaceState({}, "", u.toString());
         } catch (_) {
@@ -660,7 +747,13 @@
     decodeWishSpec,
     getCredits,
     setCredits,
+    getSavedGames,
+    recordSavedGame,
+    removeSavedGame,
+    slugUrlFor,
+    shareUrlFor,
     SEED_CREDITS,
     CREDITS_KEY,
+    SAVED_GAMES_KEY,
   };
 })(window);
