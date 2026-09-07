@@ -774,7 +774,7 @@
     const picked = pickWeighted(items);
     let kind = picked.kind;
     if (!MashEntities.meta(kind, this.spec.customEntities)) kind = "star";
-    MashSpawn.spawnOne(this, kind);
+    MashSpawn.spawnOne(this, kind, picked);
     this.maybeSendActor();
 
     // Palm-slam: extra visual sparkles, not overlapping spawn storms.

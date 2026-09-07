@@ -1,0 +1,30 @@
+{
+  "id": "cookie-monster-munch",
+  "title": "Cookie Monster Munch",
+  "brand": "mashbaby",
+  "copy": "Mash any key — cookies land on the sidewalk! The blue monster pops out of his trash can, om noms, then dives back in!",
+  "theme": {
+    "skyTop": "#7ec8ff",
+    "skyBot": "#d6efff",
+    "wallColor": "#c45a4a",
+    "wallDotColors": ["#5ab0ff", "#ffe066"],
+    "floorColor": "#b8b0a4",
+    "floorLine": "#8a8278",
+    "accent": "#3a8fd4",
+    "gateBtnFrom": "#3a8fd4",
+    "gateBtnTo": "#e08940"
+  },
+  "scene": { "template": "trashcan-alley", "props": {} },
+  "onMash": [
+    { "kind": "cookie", "weight": 100, "behavior": "drop_ready" }
+  ],
+  "actors": [{ "kind": "monster", "behavior": "pop_from_can", "max": 2 }],
+  "ambient": [],
+  "limits": { "maxSpawns": 10, "spawnCooldownMs": 110 },
+  "customEntities": {},
+  "customize": {
+    "persist": true,
+    "skyPalette": true,
+    "wallPalette": true
+  }
+}

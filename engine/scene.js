@@ -127,12 +127,37 @@
       </div>`;
   }
 
+  function trashcanAlley(theme) {
+    return `
+      <div class="alley-scene" aria-hidden="true">
+        <div class="alley-sky"></div>
+        <div class="alley-bricks"></div>
+        <div class="alley-window alley-window--l"></div>
+        <div class="alley-window alley-window--r"></div>
+        <div class="alley-sidewalk" data-spawn-zone="sidewalk"></div>
+        <div class="alley-curb"></div>
+        <div class="trash-can" data-actor-home="can">
+          <div class="trash-can__shadow"></div>
+          <div class="trash-can__lid"></div>
+          <div class="trash-can__body">
+            <div class="trash-can__ridge"></div>
+            <div class="trash-can__ridge trash-can__ridge--2"></div>
+            <div class="trash-can__handle"></div>
+          </div>
+        </div>
+        <div class="alley-crumb alley-crumb--1"></div>
+        <div class="alley-crumb alley-crumb--2"></div>
+        <div class="alley-crumb alley-crumb--3"></div>
+      </div>`;
+  }
+
   const TEMPLATES = {
     "kitchen-mash": kitchen,
     "sky-pop": sky,
     "pond-splash": pond,
     "blank-room": blank,
     "pantry-nibble": pantry,
+    "trashcan-alley": trashcanAlley,
   };
 
   function render(container, spec) {

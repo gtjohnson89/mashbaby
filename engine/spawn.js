@@ -84,16 +84,31 @@
 
   function spawnDropReady(ctx, kind, meta) {
     const p = zoneRect(ctx.spawnZone, ctx.root);
-    const x = p.left + rand(p.width * 0.12, p.width * 0.88);
+    let x = p.left + rand(p.width * 0.12, p.width * 0.88);
     const y = p.top + rand(p.height * 0.2, p.height * 0.75);
+    // Keep sidewalk treats clear of a trash-can / actor home when present.
+    const home = ctx.root.querySelector("[data-actor-home]");
+    if (home) {
+      const hr = home.getBoundingClientRect();
+      const root = ctx.root.getBoundingClientRect();
+      const hx = hr.left - root.left + hr.width * 0.5;
+      const half = hr.width * 0.7;
+      if (Math.abs(x - hx) < half) {
+        x = Math.random() < 0.5
+          ? rand(p.left + p.width * 0.08, hx - half)
+          : rand(hx + half, p.left + p.width * 0.92);
+      }
+    }
     const html =
-      kind === "icecream"
-        ? MashEntities.render("icecream")
-        : kind === "ball"
-          ? MashEntities.render("ball")
-          : kind === "star"
-            ? MashEntities.render("star")
-            : customHtml(meta);
+      kind === "cookie"
+        ? MashEntities.render("cookie", { stage: "ready" })
+        : kind === "icecream"
+          ? MashEntities.render("icecream")
+          : kind === "ball"
+            ? MashEntities.render("ball")
+            : kind === "star"
+              ? MashEntities.render("star")
+              : customHtml(meta);
     const el = makeEl(meta, html, x, y, "css");
     el.classList.add("is-dropping");
     ctx.stage.appendChild(el);
@@ -289,15 +304,153 @@
     }, 380);
   }
 
-  function spawnOne(ctx, kind) {
+  function spawnOne(ctx, kind, overrides) {
     const meta = MashEntities.meta(kind, ctx.spec.customEntities);
     if (!meta) return null;
-    const behavior = meta.behavior || "drop_ready";
+    const behavior =
+      (overrides && overrides.behavior) || meta.behavior || "drop_ready";
     if (behavior === "bake_ready") return spawnBakeReady(ctx, kind, meta);
     if (behavior === "float_pop") return spawnFloatPop(ctx, kind, meta);
     if (behavior === "splash_swim") return spawnSplashSwim(ctx, kind, meta);
     if (behavior === "scurry_nibble") return spawnScurryNibble(ctx, kind, meta);
     return spawnDropReady(ctx, kind, meta);
+  }
+
+  function actorHtml(kind, meta) {
+    if (kind === "baby") return MashEntities.render("baby");
+    if (kind === "dino") return MashEntities.render("dino");
+    if (kind === "puppy") return MashEntities.render("puppy");
+    if (kind === "monster") return MashEntities.render("monster");
+    return customHtml(meta);
+  }
+
+  function homePoint(ctx) {
+    const home = ctx.root.querySelector("[data-actor-home]");
+    if (!home) {
+      const w = ctx.root.clientWidth;
+      const h = ctx.root.clientHeight;
+      return { x: w * 0.5, y: h * 0.62, el: null };
+    }
+    const hr = home.getBoundingClientRect();
+    const root = ctx.root.getBoundingClientRect();
+    return {
+      x: hr.left - root.left + hr.width * 0.5,
+      y: hr.top - root.top + hr.height * 0.22,
+      el: home,
+    };
+  }
+
+  function setCanOpen(homeEl, open) {
+    if (!homeEl) return;
+    homeEl.classList.toggle("is-open", !!open);
+    if (open) MashSounds.play("canLid");
+    else MashSounds.play("canLid");
+  }
+
+  function sendActorFromCan(ctx, actorDef, treat, meta) {
+    const kind = actorDef.kind;
+    const home = homePoint(ctx);
+    const face = treat.x >= home.x ? 1 : -1;
+    const munchX = treat.x + rand(-12, 12);
+    const munchY = treat.y + rand(-6, 18);
+    const buriedY = home.y + 70;
+    const popY = home.y - 10;
+
+    const el = makeEl(meta, actorHtml(kind, meta), home.x, buriedY, "transform");
+    el.classList.add("actor", "is-popping-up");
+    el.style.transform = `translate(${home.x}px, ${buriedY}px) scaleX(${face}) scale(0.55)`;
+    ctx.stage.appendChild(el);
+    setCanOpen(home.el, true);
+    if (meta.soundArrive) MashSounds.play(meta.soundArrive);
+
+    const popMs = rand(380, 520);
+    const pop = MashMotion.animate(
+      el,
+      [
+        { transform: `translate(${home.x}px, ${buriedY}px) scaleX(${face}) scale(0.55)` },
+        { transform: `translate(${home.x}px, ${popY}px) scaleX(${face}) scale(1.08)` },
+        { transform: `translate(${home.x}px, ${home.y}px) scaleX(${face}) scale(1)` },
+      ],
+      { duration: popMs, easing: "cubic-bezier(0.2, 0.9, 0.3, 1.15)", fill: "forwards" }
+    );
+
+    pop.onfinish = () => {
+      if (!treat.el.isConnected) {
+        diveHome(home.x, home.y, face);
+        return;
+      }
+      el.classList.remove("is-popping-up");
+      el.classList.add("is-crawling-in");
+      const dashMs = rand(700, 1100);
+      const dash = MashMotion.animate(
+        el,
+        [
+          { transform: `translate(${home.x}px, ${home.y}px) scaleX(${face})` },
+          { transform: `translate(${munchX}px, ${munchY}px) scaleX(${face})` },
+        ],
+        { duration: dashMs, easing: "ease-in-out", fill: "forwards" }
+      );
+      dash.onfinish = () => {
+        if (!treat.el.isConnected) {
+          diveHome(home.x, home.y, face);
+          return;
+        }
+        el.classList.remove("is-crawling-in");
+        el.classList.add("is-munching");
+        const interact = treat.meta.soundInteract || meta.soundInteract || "munch";
+        MashSounds.play(interact);
+        window.setTimeout(() => MashSounds.play(interact), 280);
+        window.setTimeout(() => MashSounds.play(interact), 560);
+        for (let i = 0; i < 6; i++) {
+          const crumb = document.createElement("div");
+          crumb.className = "crumb";
+          crumb.style.left = `${munchX + rand(-14, 14)}px`;
+          crumb.style.top = `${munchY + rand(-6, 12)}px`;
+          crumb.style.setProperty("--dx", `${rand(-12, 16)}px`);
+          crumb.style.setProperty("--dy", `${rand(-22, -8)}px`);
+          ctx.stage.appendChild(crumb);
+          window.setTimeout(() => crumb.remove(), 800);
+        }
+        window.setTimeout(() => {
+          if (treat.el.isConnected) {
+            treat.el.classList.add("is-eaten");
+            window.setTimeout(() => {
+              if (treat.el.isConnected) treat.el.remove();
+            }, 550);
+          }
+          ctx.treats = ctx.treats.filter((t) => t !== treat);
+        }, 700);
+        window.setTimeout(() => diveHome(munchX, munchY, face), 1200);
+      };
+    };
+
+    function diveHome(fromX, fromY, fromFace) {
+      if (!el.isConnected) {
+        ctx.actorCount -= 1;
+        ctx.maybeSendActor();
+        return;
+      }
+      el.classList.remove("is-munching", "is-crawling-in", "is-popping-up");
+      el.classList.add("is-diving-in");
+      setCanOpen(home.el, true);
+      const backFace = home.x >= fromX ? 1 : -1;
+      const returnMs = rand(650, 950);
+      const back = MashMotion.animate(
+        el,
+        [
+          { transform: `translate(${fromX}px, ${fromY}px) scaleX(${fromFace})` },
+          { transform: `translate(${home.x}px, ${home.y}px) scaleX(${backFace})` },
+          { transform: `translate(${home.x}px, ${buriedY}px) scaleX(${backFace}) scale(0.45)` },
+        ],
+        { duration: returnMs, easing: "ease-in", fill: "forwards" }
+      );
+      back.onfinish = () => {
+        el.remove();
+        setCanOpen(home.el, false);
+        ctx.actorCount -= 1;
+        ctx.maybeSendActor();
+      };
+    }
   }
 
   function sendActor(ctx, actorDef, treat) {
@@ -306,6 +459,12 @@
     if (!meta) return;
 
     ctx.actorCount += 1;
+    const behavior = actorDef.behavior || meta.behavior || "seek_and_munch";
+    if (behavior === "pop_from_can") {
+      sendActorFromCan(ctx, actorDef, treat, meta);
+      return;
+    }
+
     const fromLeft = Math.random() < 0.5;
     const face = fromLeft ? 1 : -1;
     const width = ctx.root.clientWidth;
@@ -316,16 +475,8 @@
     const startY = Math.min(height * 0.78, munchY + rand(40, 90));
     const exitX = fromLeft ? width + 100 : -100;
     const exitY = startY + rand(-20, 40);
-    const html =
-      kind === "baby"
-        ? MashEntities.render("baby")
-        : kind === "dino"
-          ? MashEntities.render("dino")
-          : kind === "puppy"
-            ? MashEntities.render("puppy")
-            : customHtml(meta);
 
-    const el = makeEl(meta, html, startX, startY, "transform");
+    const el = makeEl(meta, actorHtml(kind, meta), startX, startY, "transform");
     el.classList.add("actor", "is-crawling-in");
     el.style.transform = `translate(${startX}px, ${startY}px) scaleX(${face})`;
     ctx.stage.appendChild(el);

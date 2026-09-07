@@ -162,6 +162,11 @@ body.dashboard {
   border-color: rgba(255, 224, 102, 0.45);
 }
 
+.game-btn--monster {
+  background: linear-gradient(160deg, #fff 0%, #e8f4ff 50%, #fff3e0 100%);
+  border-color: rgba(58, 143, 212, 0.35);
+}
+
 .game-btn__art {
   display: block;
   line-height: 0;

@@ -32,6 +32,11 @@ ACTORS = {
         "behavior": "seek_and_munch",
         "labels": ["puppy", "puppies", "dog", "dogs"],
     },
+    "monster": {
+        "role": "actor",
+        "behavior": "seek_and_munch",
+        "labels": ["monster", "monsters", "cookie monster", "om nom"],
+    },
 }
 
 AMBIENT = {
@@ -61,7 +66,16 @@ COLORS = {
 
 TEMPLATES = {
     "kitchen-mash": {
-        "keywords": ["cookie", "kitchen", "oven", "baby", "babies", "bake", "treat", "ice cream"],
+            "keywords": [
+                "cookie",
+                "kitchen",
+                "oven",
+                "baby",
+                "babies",
+                "bake",
+                "treat",
+                "ice cream",
+            ],
         "default_spec": {
             "scene": {"template": "kitchen-mash", "props": {}},
             "theme": {
@@ -142,6 +156,37 @@ TEMPLATES = {
             "limits": {"maxSpawns": 12, "spawnCooldownMs": 100},
             "customEntities": {},
             "customize": {"persist": True, "wallPalette": True},
+        },
+    },
+    "trashcan-alley": {
+        "keywords": [
+            "monster",
+            "cookie monster",
+            "trash",
+            "trash can",
+            "trashcan",
+            "alley",
+            "om nom",
+        ],
+        "default_spec": {
+            "scene": {"template": "trashcan-alley", "props": {}},
+            "theme": {
+                "skyTop": "#7ec8ff",
+                "skyBot": "#d6efff",
+                "wallColor": "#c45a4a",
+                "wallDotColors": ["#5ab0ff", "#ffe066"],
+                "floorColor": "#b8b0a4",
+                "floorLine": "#8a8278",
+                "accent": "#3a8fd4",
+                "gateBtnFrom": "#3a8fd4",
+                "gateBtnTo": "#e08940",
+            },
+            "onMash": [{"kind": "cookie", "weight": 100, "behavior": "drop_ready"}],
+            "actors": [{"kind": "monster", "behavior": "pop_from_can", "max": 2}],
+            "ambient": [],
+            "limits": {"maxSpawns": 10, "spawnCooldownMs": 110},
+            "customEntities": {},
+            "customize": {"persist": True, "skyPalette": True, "wallPalette": True},
         },
     },
     "blank-room": {

@@ -10,6 +10,8 @@ Customer shape is **co-creation via Wishes**: parent + kid wish together inside 
 
 → Full north star, in/out, monetization, and build plan: [`docs/PRODUCT.md`](docs/PRODUCT.md)
 
+→ **Ordered implementation plans (start here to build): [`docs/plans/`](docs/plans/README.md)** — phase 01 (securing `/api/wish`) blocks public hosting.
+
 ## Quick play (static specs)
 
 ```bash
@@ -71,6 +73,7 @@ Studio invents packs; it is not the customer product. Customer co-creation lives
 | Balloon Pop Party | `specs/balloon-pop-party.json` |
 | Duck Pond Splash | `specs/duck-pond-splash.json` |
 | Squeaky Mice | `specs/squeaky-mice.json` |
+| Cookie Monster Munch | `specs/cookie-monster-munch.json` |
 
 Parent controls in play (top-right strip):
 - **Wish ★** — hold **~2 seconds** to open the parent Wish box; mash play ignores the overlay

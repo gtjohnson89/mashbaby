@@ -57,6 +57,12 @@
     { fur: "#fff6e0", ear: "#e8d090", belly: "#ffffff", eye: "#2a2a2a" },
   ];
 
+  const MONSTER_LOOKS = [
+    { fur: "#3a8fd4", belly: "#6eb8f0", mouth: "#1a2840", eye: "#2a2a2a" },
+    { fur: "#2f7fc4", belly: "#5aa8e8", mouth: "#152030", eye: "#2a2a2a" },
+    { fur: "#4a9ae0", belly: "#7ec8ff", mouth: "#1a2840", eye: "#2a2a2a" },
+  ];
+
   function cookieSvg(stageName) {
     const fill = stageName === "ready" ? "#c47a3a" : stageName === "baking" ? "#e8b86a" : "#f3d8a6";
     const rim = stageName === "ready" ? "#a05a28" : stageName === "baking" ? "#d4a05a" : "#e8c98a";
@@ -184,6 +190,30 @@
     </svg>`;
   }
 
+  function monsterSvg(look) {
+    const l = look || pick(MONSTER_LOOKS);
+    return `<svg class="ent__svg" viewBox="0 0 140 120" aria-hidden="true">
+      <ellipse cx="70" cy="72" rx="48" ry="36" fill="${l.fur}"/>
+      <ellipse cx="70" cy="80" rx="30" ry="20" fill="${l.belly}"/>
+      <circle cx="70" cy="48" r="38" fill="${l.fur}"/>
+      <circle cx="52" cy="40" r="14" fill="#fff"/>
+      <circle cx="88" cy="38" r="16" fill="#fff"/>
+      <circle cx="54" cy="42" r="6" fill="${l.eye}"/>
+      <circle cx="90" cy="40" r="7" fill="${l.eye}"/>
+      <circle cx="56" cy="40" r="2" fill="#fff"/>
+      <circle cx="92" cy="38" r="2.2" fill="#fff"/>
+      <ellipse cx="70" cy="62" rx="22" ry="16" fill="${l.mouth}"/>
+      <ellipse cx="70" cy="58" rx="18" ry="4" fill="#c45a6a" opacity="0.35"/>
+      <ellipse cx="48" cy="98" rx="12" ry="10" fill="${l.fur}"/>
+      <ellipse cx="92" cy="98" rx="12" ry="10" fill="${l.fur}"/>
+      <circle cx="28" cy="70" r="10" fill="${l.fur}"/>
+      <circle cx="112" cy="68" r="10" fill="${l.fur}"/>
+      <circle cx="100" cy="78" r="6" fill="#e8b86a"/>
+      <circle cx="98" cy="76" r="1.4" fill="#5a3018"/>
+      <circle cx="103" cy="80" r="1.2" fill="#5a3018"/>
+    </svg>`;
+  }
+
   function birdSvg() {
     const c = pick(["#5ab0ff", "#ff6b9d", "#ffe066", "#c49bff"]);
     return `<svg class="ent__svg" viewBox="0 0 48 32" aria-hidden="true">
@@ -207,6 +237,7 @@
     baby: { role: "actor", behavior: "seek_and_munch", width: 130, height: 110, soundArrive: "babyArrive", soundInteract: "munch" },
     dino: { role: "actor", behavior: "seek_and_munch", width: 140, height: 110, soundArrive: "roar", soundInteract: "munch" },
     puppy: { role: "actor", behavior: "seek_and_munch", width: 120, height: 100, soundArrive: "babyArrive", soundInteract: "munch" },
+    monster: { role: "actor", behavior: "pop_from_can", width: 140, height: 120, soundArrive: "omNom", soundInteract: "munch" },
     birds: { role: "ambient", behavior: "fly_across", width: 48, height: 32, soundSpawn: "chirp" },
     clouds: { role: "ambient", behavior: "drift", width: 80, height: 30 },
     bubbles: { role: "ambient", behavior: "rise", width: 24, height: 24 },
@@ -236,6 +267,8 @@
         return dinoSvg(opts.look);
       case "puppy":
         return puppySvg(opts.look);
+      case "monster":
+        return monsterSvg(opts.look);
       case "birds":
       case "bird":
         return birdSvg();
@@ -276,5 +309,6 @@
     MOUSE_LOOKS,
     DINO_LOOKS,
     PUPPY_LOOKS,
+    MONSTER_LOOKS,
   };
 })(window);

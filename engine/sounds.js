@@ -442,6 +442,55 @@
     });
   }
 
+  /** Goofy cookie-monster “om nom” arrive. */
+  function playOmNom() {
+    safe(() => {
+      [0, 0.12, 0.24].forEach((off, i) => {
+        const t = ctx.currentTime + off;
+        const osc = ctx.createOscillator();
+        osc.type = "triangle";
+        const start = 220 - i * 30;
+        osc.frequency.setValueAtTime(start, t);
+        osc.frequency.exponentialRampToValueAtTime(start * 0.7, t + 0.1);
+        const g = envGain(0.16, 0.01, 0.05, 0.08, t);
+        osc.connect(g);
+        g.connect(master);
+        osc.start(t);
+        osc.stop(t + 0.14);
+      });
+    });
+  }
+
+  /** Metal trash-can lid clang. */
+  function playCanLid() {
+    safe(() => {
+      const t = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(520, t);
+      osc.frequency.exponentialRampToValueAtTime(180, t + 0.12);
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.value = 900;
+      filter.Q.value = 6;
+      const g = envGain(0.1, 0.002, 0.04, 0.1, t);
+      osc.connect(filter);
+      filter.connect(g);
+      g.connect(master);
+      osc.start(t);
+      osc.stop(t + 0.16);
+      const osc2 = ctx.createOscillator();
+      osc2.type = "triangle";
+      osc2.frequency.setValueAtTime(240, t + 0.02);
+      osc2.frequency.exponentialRampToValueAtTime(90, t + 0.14);
+      const g2 = envGain(0.08, 0.002, 0.05, 0.1, t + 0.02);
+      osc2.connect(g2);
+      g2.connect(master);
+      osc2.start(t + 0.02);
+      osc2.stop(t + 0.18);
+    });
+  }
+
   const PRESETS = {
     keyPop: playKeyPop,
     softThud: playSoftThud,
@@ -460,6 +509,8 @@
     roar: playRoar,
     chirp: playChirp,
     squeak: playSqueak,
+    omNom: playOmNom,
+    canLid: playCanLid,
   };
 
   function play(name) {

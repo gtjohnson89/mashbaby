@@ -38,6 +38,7 @@
     "pond-splash": true,
     "blank-room": true,
     "pantry-nibble": true,
+    "trashcan-alley": true,
   };
 
   const KNOWN_SPAWN_KINDS = {
@@ -54,6 +55,7 @@
     baby: true,
     dino: true,
     puppy: true,
+    monster: true,
   };
 
   const KNOWN_AMBIENT = {
@@ -93,10 +95,16 @@
     let onMash = Array.isArray(raw.onMash) ? raw.onMash : [];
     onMash = onMash
       .filter((item) => item && kindResolvable(item.kind, customEntities))
-      .map((item) => ({
-        kind: item.kind,
-        weight: typeof item.weight === "number" && item.weight > 0 ? item.weight : 1,
-      }));
+      .map((item) => {
+        const mapped = {
+          kind: item.kind,
+          weight: typeof item.weight === "number" && item.weight > 0 ? item.weight : 1,
+        };
+        if (typeof item.behavior === "string" && item.behavior) {
+          mapped.behavior = item.behavior;
+        }
+        return mapped;
+      });
     if (!onMash.length) {
       onMash = [{ kind: "star", weight: 1 }, { kind: "ball", weight: 1 }];
     }

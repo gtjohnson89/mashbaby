@@ -22,9 +22,9 @@ Source of truth for a playable mash game. The runtime loads one JSON document an
     "gateBtnFrom": "#e08940",
     "gateBtnTo": "#d45a7a"
   },
-  "scene": { "template": "kitchen-mash|sky-pop|pond-splash|blank-room", "props": {} },
-  "onMash": [{ "kind": "cookie|icecream|balloon|duck|ball|star|customId", "weight": 65 }],
-  "actors": [{ "kind": "baby|dino|puppy|customId", "behavior": "seek_and_munch", "max": 8 }],
+  "scene": { "template": "kitchen-mash|sky-pop|pond-splash|blank-room|pantry-nibble|trashcan-alley", "props": {} },
+  "onMash": [{ "kind": "cookie|icecream|balloon|duck|ball|star|customId", "weight": 65, "behavior": "optional override" }],
+  "actors": [{ "kind": "baby|dino|puppy|monster|customId", "behavior": "seek_and_munch|pop_from_can", "max": 8 }],
   "ambient": [{ "kind": "birds|clouds|bubbles|sparkles", "count": 4 }],
   "sounds": {},
   "limits": { "maxSpawns": 18, "spawnCooldownMs": 90 },
