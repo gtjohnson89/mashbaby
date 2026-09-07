@@ -11,9 +11,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import db, grok
+from . import db, grok, spellbook
 from .catalog import glossary
-from .grok import invent_or_patch
+from .grok import apply_patch_with_palette, generate_patch, invent_or_patch
 from .limits import (
     allowed_origins,
     client_ip,
@@ -57,7 +57,12 @@ def _startup() -> None:
 
 @app.get("/api/health")
 def health() -> dict[str, Any]:
-    return {"status": "ok", "llm_budget_remaining": llm_budget.remaining()}
+    stats = db.spell_stats()
+    return {
+        "status": "ok",
+        "llm_budget_remaining": llm_budget.remaining(),
+        "spellbook_count": stats["count"],
+    }
 
 
 @app.get("/api/catalog")
@@ -89,12 +94,26 @@ async def wish_patch(request: Request, body: WishBody) -> dict[str, Any]:
     novel = False
 
     if intent == "freewheel":
-        if llm_window.check(ip) and llm_budget.check_and_spend():
-            new_spec, usage, note = await invent_or_patch(
+        cached = spellbook.lookup(body.text)
+        if cached:
+            new_spec = apply_patch_with_palette(body.spec, cached["patch"])
+            note = cached["note"]
+            usage = {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+                "path": "spellbook",
+                "novel": True,
+            }
+        elif llm_window.check(ip) and llm_budget.check_and_spend():
+            patch, usage, note = await generate_patch(
                 spec=body.spec,
                 text=body.text,
                 history=[],
             )
+            new_spec = apply_patch_with_palette(body.spec, patch)
+            source = "grok" if usage.get("path") == "grok" else "offline"
+            spellbook.remember(body.text, patch, note, source=source)
         else:
             new_spec, usage, note = grok._offline_freewheel(body.spec, body.text)
             usage["path"] = "rate_limited_offline"

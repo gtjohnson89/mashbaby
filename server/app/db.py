@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import DateTime, Integer, String, Text, create_engine, select
+from sqlalchemy import DateTime, Integer, String, Text, create_engine, func, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session, sessionmaker
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -32,6 +32,18 @@ class MashSession(Base):
     spec_json: Mapped[str] = mapped_column(Text)
     history_json: Mapped[str] = mapped_column(Text, default="[]")
     total_tokens: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class Spell(Base):
+    __tablename__ = "spellbook"
+
+    key: Mapped[str] = mapped_column(String(120), primary_key=True)
+    raw_text: Mapped[str] = mapped_column(Text)
+    patch_json: Mapped[str] = mapped_column(Text)
+    note: Mapped[str] = mapped_column(Text)
+    source: Mapped[str] = mapped_column(String(24))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    hit_count: Mapped[int] = mapped_column(Integer, default=0)
 
 
 def init_db() -> None:
@@ -117,3 +129,60 @@ def _public(row: MashSession) -> dict[str, Any]:
         "history": json.loads(row.history_json or "[]"),
         "usage": {"total_tokens": row.total_tokens or 0},
     }
+
+
+def spell_get(key: str) -> dict[str, Any] | None:
+    with SessionLocal() as db:
+        row = db.get(Spell, key)
+        if not row:
+            return None
+        row.hit_count = (row.hit_count or 0) + 1
+        db.commit()
+        return {
+            "patch": json.loads(row.patch_json),
+            "note": row.note,
+            "source": row.source,
+            "raw_text": row.raw_text,
+        }
+
+
+def spell_exists(key: str) -> bool:
+    with SessionLocal() as db:
+        return db.get(Spell, key) is not None
+
+
+def spell_put(key: str, raw_text: str, patch: dict[str, Any], note: str, source: str) -> None:
+    with SessionLocal() as db:
+        existing = db.get(Spell, key)
+        if existing and existing.source == "hand":
+            return
+        now = datetime.now(timezone.utc)
+        if existing:
+            existing.raw_text = raw_text
+            existing.patch_json = json.dumps(patch)
+            existing.note = note
+            existing.source = source
+            existing.created_at = now
+        else:
+            db.add(
+                Spell(
+                    key=key,
+                    raw_text=raw_text,
+                    patch_json=json.dumps(patch),
+                    note=note,
+                    source=source,
+                    created_at=now,
+                    hit_count=0,
+                )
+            )
+        db.commit()
+
+
+def spell_stats() -> dict[str, Any]:
+    with SessionLocal() as db:
+        count = db.scalar(select(func.count()).select_from(Spell)) or 0
+        rows = db.scalars(select(Spell).order_by(Spell.hit_count.desc()).limit(10)).all()
+        return {
+            "count": count,
+            "top": [(row.key, row.hit_count or 0) for row in rows],
+        }

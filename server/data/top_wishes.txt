@@ -1,0 +1,307 @@
+# mashbaby spellbook seed wishes — one per line, # comments ok
+
+# Animals
+kitty
+dragon
+unicorn
+puppy
+bunny
+bear
+elephant
+monkey
+penguin
+lion
+tiger
+giraffe
+zebra
+cow
+pig
+sheep
+horse
+duck
+chicken
+frog
+fish
+shark
+whale
+dolphin
+turtle
+snake
+owl
+bee
+butterfly
+ladybug
+spider
+crab
+dinosaur
+mermaid
+a friendly dragon
+a magical unicorn
+cute kitty
+playful puppy
+hoppy bunny
+cuddly bear
+gentle elephant
+silly monkey
+waddly penguin
+roar-y lion
+stripey tiger
+quacky duck
+fluffy sheep
+gallopy horse
+oinky pig
+mooey cow
+leapy frog
+splashy fish
+buzzy bee
+spotty ladybug
+pinchy crab
+wise owl
+friendly monster
+baby dinosaur
+tiny turtle
+slithery snake
+big whale
+happy dolphin
+scary shark
+creepy spider
+
+# Vehicles
+truck
+fire truck
+digger
+excavator
+train
+bus
+car
+race car
+tractor
+airplane
+helicopter
+rocket
+boat
+garbage truck
+police car
+ambulance
+motorcycle
+zoomy truck
+choo-choo train
+fast race car
+big digger
+red fire truck
+blue police car
+yellow school bus
+flying airplane
+spinning helicopter
+zoomy rocket
+sailboat
+speedy car
+farm tractor
+recycling truck
+
+# Characters
+robot
+princess
+pirate
+wizard
+superhero
+fairy
+ghost
+snowman
+clown
+beepy robot
+sparkly princess
+silly pirate
+magic wizard
+brave superhero
+tiny fairy
+friendly ghost
+frosty snowman
+funny clown
+space robot
+crown princess
+treasure pirate
+wand wizard
+cape superhero
+glitter fairy
+
+# Food
+cake
+cupcake
+pizza
+banana
+apple
+strawberry
+donut
+candy
+lollipop
+watermelon
+cheese
+spaghetti
+birthday cake
+pink cupcake
+cheesy pizza
+yellow banana
+red apple
+sweet strawberry
+chocolate donut
+yummy candy
+rainbow lollipop
+big watermelon
+melty cheese
+wiggly spaghetti
+ice cream
+cookie
+chocolate chip cookie
+a really big cookie
+pink frosting cupcake
+pepperoni pizza
+
+# Nature and weather
+rainbow
+flower
+tree
+sun
+moon
+stars
+snow
+rain
+clouds
+volcano
+pretty rainbow
+happy flower
+tall tree
+bright sun
+sleepy moon
+twinkly stars
+fluffy snow
+pitter patter rain
+puffy clouds
+erupting volcano
+sunny day
+starry night
+snowy day
+rainy day
+garden flower
+cherry blossom
+big tree
+yellow sun
+silver moon
+shooting star
+
+# Worlds
+space
+underwater
+jungle
+farm
+beach
+castle
+candy land
+dinosaur land
+north pole
+city
+outer space
+deep underwater
+rainy jungle
+happy farm
+sandy beach
+fairy castle
+sweet candy land
+prehistoric dinosaur land
+icy north pole
+busy city
+turn it into space
+make it rainbow
+everything pink
+under the sea
+on the farm
+at the beach
+in a castle
+candy world
+dino world
+winter wonderland
+big city
+
+# Phrasings (normalizer exercise)
+more ducks
+add a puppy please
+can we have a puppy
+can we have a puppy?
+a puppy
+PUPPY
+add a dragon please
+put a unicorn here
+i want a kitty
+lets add a truck
+how about a robot
+would like a bunny
+give us a bear
+get me a dinosaur
+make a snowman
+add some fish
+put a rocket in
+make it rainbow
+a really big cookie
+more ducks please
+another kitty
+extra puppies
+friendly dragon
+magical unicorn
+silly monkey please
+big red truck
+little yellow duck
+purple dinosaur
+green frog
+blue whale
+orange tiger
+pink pig
+brown bear
+black and white cow
+spotted ladybug
+striped zebra
+flying butterfly
+swimming fish
+jumping frog
+sleeping owl
+running horse
+waddling penguin
+roaring lion
+hissing snake
+buzzing bee
+crawling spider
+pinching crab
+hopping bunny
+wagging puppy
+purring kitty
+floating balloon
+party balloon
+sparkly star
+glowing moon
+shining sun
+falling snow
+pouring rain
+rolling cloud
+blooming flower
+growing tree
+sweet candy
+gooey cheese
+crunchy apple
+juicy watermelon
+warm cookie
+cold ice cream
+yummy pizza
+tasty cupcake
+delicious cake
+teddy bear
+stuffed animal
+doll
+ball
+kite
+bubbles
+balloon animal
+treasure chest
+sandcastle
+hot air balloon
+skateboard
+bicycle
+tricycle
