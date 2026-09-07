@@ -82,13 +82,6 @@ async def wish_patch(request: Request, body: WishBody) -> dict[str, Any]:
     if spec_too_big(body.spec):
         raise HTTPException(413, "That game got too big to wish on.")
 
-    if not wish_window.check(ip):
-        raise HTTPException(
-            status_code=429,
-            detail="Too many wishes right now — take a mash break and try again soon.",
-            headers={"Retry-After": str(wish_window.retry_after(ip))},
-        )
-
     new_spec, intent, usage = apply_tweak(body.spec, body.text)
     note = "Updated!"
     novel = False
@@ -105,6 +98,12 @@ async def wish_patch(request: Request, body: WishBody) -> dict[str, Any]:
                 "path": "spellbook",
                 "novel": True,
             }
+        elif not wish_window.check(ip):
+            raise HTTPException(
+                status_code=429,
+                detail="Too many wishes right now — take a mash break and try again soon.",
+                headers={"Retry-After": str(wish_window.retry_after(ip))},
+            )
         elif llm_window.check(ip) and llm_budget.check_and_spend():
             patch, usage, note = await generate_patch(
                 spec=body.spec,
@@ -120,19 +119,26 @@ async def wish_patch(request: Request, body: WishBody) -> dict[str, Any]:
             note = "The wish wizard needs a little rest — here's some offline magic! Try again in a bit."
         intent = "freewheel"
         novel = True
-    elif intent == "theme":
-        note = "Pinker? Bluer? Done — colors changed!"
-    elif intent == "palette":
-        note = "Whoosh — a whole new world!"
-    elif intent == "ambient":
-        note = "Something floated into the sky!"
-    elif intent == "catalog_add":
-        note = "Added it to the mash mix!"
-    elif intent == "more":
-        note = "More of that — coming right up!"
-    elif intent == "full_rethink":
-        note = "Started a fresh game from that idea."
-        novel = True
+    else:
+        if not wish_window.check(ip):
+            raise HTTPException(
+                status_code=429,
+                detail="Too many wishes right now — take a mash break and try again soon.",
+                headers={"Retry-After": str(wish_window.retry_after(ip))},
+            )
+        if intent == "theme":
+            note = "Pinker? Bluer? Done — colors changed!"
+        elif intent == "palette":
+            note = "Whoosh — a whole new world!"
+        elif intent == "ambient":
+            note = "Something floated into the sky!"
+        elif intent == "catalog_add":
+            note = "Added it to the mash mix!"
+        elif intent == "more":
+            note = "More of that — coming right up!"
+        elif intent == "full_rethink":
+            note = "Started a fresh game from that idea."
+            novel = True
 
     usage = {**usage, "novel": novel or bool(usage.get("novel"))}
     return {
