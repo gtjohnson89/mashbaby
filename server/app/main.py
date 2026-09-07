@@ -11,7 +11,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import db, grok, spellbook
+from . import db, grok, saves, spellbook
 from .catalog import glossary
 from .grok import apply_patch_with_palette, generate_patch, invent_or_patch
 from .limits import (
@@ -19,6 +19,7 @@ from .limits import (
     client_ip,
     llm_budget,
     llm_window,
+    save_window,
     spec_too_big,
     wish_window,
 )
@@ -47,6 +48,10 @@ class WishBody(BaseModel):
     """Stateless parent wish — coffee-table play without a Studio session."""
 
     text: str = Field(min_length=1, max_length=400)
+    spec: dict[str, Any]
+
+
+class SaveBody(BaseModel):
     spec: dict[str, Any]
 
 
@@ -242,6 +247,42 @@ async def tweak_session(session_id: str, request: Request, body: TweakBody) -> d
     )
     assert updated
     return {**updated, "intent": intent, "note": note, "turn_usage": usage}
+
+
+@app.post("/api/save")
+def api_save(request: Request, body: SaveBody) -> dict[str, str]:
+    ip = client_ip(request)
+    if not save_window.check(ip):
+        raise HTTPException(
+            status_code=429,
+            detail="Too many saves right now — try again in a bit.",
+            headers={"Retry-After": str(save_window.retry_after(ip))},
+        )
+    if spec_too_big(body.spec):
+        raise HTTPException(413, "That game is too big to save.")
+    try:
+        return saves.save(body.spec)
+    except ValueError as exc:
+        if str(exc) == "unsafe_svg":
+            raise HTTPException(400, "Unsafe custom art in that game.")
+        raise
+
+
+@app.get("/api/g/{slug}")
+def api_get_saved(slug: str) -> dict[str, Any]:
+    if not saves.SLUG_RE.match(slug):
+        raise HTTPException(404, "Not found")
+    row = saves.load(slug)
+    if not row:
+        raise HTTPException(404, "Not found")
+    return row
+
+
+@app.get("/g/{slug}")
+def play_saved(slug: str) -> FileResponse:
+    if not saves.SLUG_RE.match(slug):
+        raise HTTPException(404, "Not found")
+    return FileResponse(ROOT / "engine" / "play.html")
 
 
 # Static mounts

@@ -877,6 +877,28 @@
     }
   }
 
+  function slugFromLocation() {
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = params.get("g");
+    if (fromQuery) return fromQuery.toLowerCase();
+    const match = window.location.pathname.match(/\/g\/([a-z]+-[a-z]+-[0-9a-f]{4})\/?$/i);
+    return match ? match[1].toLowerCase() : null;
+  }
+
+  async function loadSavedSpec(slug) {
+    try {
+      const res = await fetch(`/api/g/${encodeURIComponent(slug)}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data.spec && MashValidate.isUsable(data.spec)) {
+        return MashValidate.sanitize(data.spec);
+      }
+    } catch (_) {
+      /* fall through */
+    }
+    return null;
+  }
+
   /**
    * Boot never throws a toddler-facing error. Bad/missing specs fall back to cookies.
    */
@@ -890,9 +912,18 @@
     const wishToken = params.get("wish");
     let spec;
     let fromWishUrl = false;
+    let fromSlug = false;
 
-    // Shared “look what we made” link wins over pack defaults / local restore.
-    if (wishToken && global.MashWishes && typeof MashWishes.decodeWishSpec === "function") {
+    const slug = slugFromLocation();
+    if (slug) {
+      const saved = await loadSavedSpec(slug);
+      if (saved) {
+        spec = saved;
+        fromSlug = true;
+      }
+    }
+
+    if (!spec && wishToken && global.MashWishes && typeof MashWishes.decodeWishSpec === "function") {
       const decoded = MashWishes.decodeWishSpec(wishToken);
       if (decoded && MashValidate.isUsable(decoded)) {
         spec = MashValidate.sanitize(decoded);
@@ -909,7 +940,7 @@
           spec = MashValidate.sanitize(data.spec);
         } else if (specUrl) {
           spec = await loadSpecSafe(specUrl);
-        } else {
+        } else if (!slug) {
           spec = await loadSpecSafe(FALLBACK_SPEC_URL);
         }
       } catch (_) {
@@ -917,12 +948,11 @@
       }
     }
 
-    if (!MashValidate.isUsable(spec)) {
+    if (!spec || !MashValidate.isUsable(spec)) {
       spec = MashValidate.sanitize(MashValidate.FALLBACK_SPEC);
     }
 
-    // Restore last parent wish for this pack (local only; no accounts).
-    if (!fromWishUrl && !sessionId && global.MashWishes && typeof MashWishes.loadPersisted === "function") {
+    if (!fromWishUrl && !fromSlug && !sessionId && global.MashWishes && typeof MashWishes.loadPersisted === "function") {
       const saved = MashWishes.loadPersisted(spec.id);
       if (saved && MashValidate.isUsable(saved)) {
         spec = MashValidate.sanitize(saved);

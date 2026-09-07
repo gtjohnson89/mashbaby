@@ -17,6 +17,10 @@
       <p class="tagline">Pick a game and mash those keys!</p>
       <p class="tagline tagline--studio">Parents: in play, hold ★ Wish ~2s to change the game</p>
     </header>
+    <section id="our-games" class="our-games" hidden>
+      <h2 class="our-games__title">Our Games</h2>
+      <nav class="game-grid our-games__grid" id="our-games-grid" aria-label="Our saved games"></nav>
+    </section>
     <nav class="game-grid" aria-label="Games">
       <a class="game-btn game-btn--cookies" href="engine/play.html?spec=../specs/babies-eating-cookies.json">
         <span class="game-btn__art" aria-hidden="true">
@@ -92,5 +96,129 @@
       </a>
     </nav>
   </main>
+  <script>
+    (function () {
+      "use strict";
+
+      var SAVED_GAMES_KEY = "mash:savedGames";
+      var REMOVE_HOLD_MS = 1000;
+
+      function readSaved() {
+        try {
+          var raw = localStorage.getItem(SAVED_GAMES_KEY);
+          var list = raw ? JSON.parse(raw) : [];
+          return Array.isArray(list) ? list : [];
+        } catch (_) {
+          return [];
+        }
+      }
+
+      function writeSaved(list) {
+        try {
+          localStorage.setItem(SAVED_GAMES_KEY, JSON.stringify(list));
+        } catch (_) {
+          /* ignore */
+        }
+      }
+
+      function relativeDate(ts) {
+        var days = Math.floor((Date.now() - ts) / 86400000);
+        if (days < 1) return "made today";
+        if (days === 1) return "made yesterday";
+        return "made " + days + " days ago";
+      }
+
+      function renderShelf() {
+        var section = document.getElementById("our-games");
+        var grid = document.getElementById("our-games-grid");
+        if (!section || !grid) return;
+        var games = readSaved();
+        grid.innerHTML = "";
+        if (!games.length) {
+          section.hidden = true;
+          return;
+        }
+        section.hidden = false;
+        games.forEach(function (game) {
+          var tile = document.createElement("a");
+          tile.className = "game-btn game-btn--saved";
+          tile.href = "/g/" + encodeURIComponent(game.slug);
+          tile.innerHTML =
+            '<span class="game-btn__art saved-game__art" aria-hidden="true">★</span>' +
+            '<span class="game-btn__title"></span>' +
+            '<span class="game-btn__hint saved-game__when"></span>';
+          tile.querySelector(".game-btn__title").textContent = game.title || "Our game";
+          tile.querySelector(".saved-game__when").textContent = relativeDate(game.savedAt || Date.now());
+
+          var removeBtn = document.createElement("button");
+          removeBtn.type = "button";
+          removeBtn.className = "saved-game__remove";
+          removeBtn.setAttribute("aria-label", "Hold about a second to remove from shelf");
+          removeBtn.textContent = "×";
+
+          var holdStart = null;
+          var holdRaf = null;
+
+          function cancelHold() {
+            holdStart = null;
+            if (holdRaf != null) {
+              cancelAnimationFrame(holdRaf);
+              holdRaf = null;
+            }
+            removeBtn.classList.remove("is-holding", "is-ready");
+          }
+
+          removeBtn.addEventListener("pointerdown", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.pointerId != null && removeBtn.setPointerCapture) {
+              try {
+                removeBtn.setPointerCapture(e.pointerId);
+              } catch (_) {
+                /* ignore */
+              }
+            }
+            if (holdStart != null) return;
+            holdStart = performance.now();
+            removeBtn.classList.add("is-holding");
+            var tick = function () {
+              if (holdStart == null) return;
+              var t = (performance.now() - holdStart) / REMOVE_HOLD_MS;
+              if (t >= 1) {
+                holdStart = null;
+                holdRaf = null;
+                removeBtn.classList.remove("is-holding");
+                removeBtn.classList.add("is-ready");
+                var next = readSaved().filter(function (item) {
+                  return item.slug !== game.slug;
+                });
+                writeSaved(next);
+                renderShelf();
+                return;
+              }
+              holdRaf = requestAnimationFrame(tick);
+            };
+            holdRaf = requestAnimationFrame(tick);
+          });
+
+          removeBtn.addEventListener("pointerup", function (e) {
+            e.stopPropagation();
+            cancelHold();
+          });
+          removeBtn.addEventListener("pointercancel", cancelHold);
+          removeBtn.addEventListener("lostpointercapture", cancelHold);
+          removeBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          });
+
+          tile.appendChild(removeBtn);
+          grid.appendChild(tile);
+        });
+      }
+
+      renderShelf();
+    })();
+  </script>
 </body>
 </html>
