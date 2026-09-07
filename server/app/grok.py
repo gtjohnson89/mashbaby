@@ -77,28 +77,34 @@ def _expand_palette(patch: dict[str, Any]) -> dict[str, Any]:
     return patch
 
 
-def _apply_patch_with_palette(spec: dict[str, Any], patch: dict[str, Any]) -> dict[str, Any]:
-    palette_ambient = patch.pop("_palette_ambient", None)
-    new_spec = apply_json_patch(spec, patch)
+def apply_patch_with_palette(spec: dict[str, Any], patch: dict[str, Any]) -> dict[str, Any]:
+    expanded = _expand_palette(dict(patch))
+    palette_ambient = expanded.pop("_palette_ambient", None)
+    new_spec = apply_json_patch(spec, expanded)
     if palette_ambient:
         for amb in palette_ambient:
             _ensure_ambient(new_spec, amb["kind"])
     return new_spec
 
 
-async def invent_or_patch(
+async def generate_patch(
     *,
     spec: dict[str, Any],
     text: str,
     history: list[dict[str, str]] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any], str]:
-    """
-    Ask Grok for a minimal GameSpec patch.
-    Returns (new_spec, usage, note).
-    """
+    """Returns (patch, usage, note). Does NOT apply the patch."""
     key = _api_key()
     if not key:
-        return _offline_freewheel(spec, text)
+        patch, note = _offline_freewheel_patch(text)
+        usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+            "path": "offline_freewheel",
+            "novel": True,
+        }
+        return patch, usage, note
 
     vocab = banks.compact_vocab()
     cat = glossary()
@@ -171,13 +177,23 @@ async def invent_or_patch(
     parsed = _parse_json(content)
     patch = parsed.get("patch") or parsed
     note = parsed.get("note") or "Your wish came true!"
-    patch = _expand_palette(dict(patch))
-    new_spec = _apply_patch_with_palette(spec, patch)
+    return dict(patch), usage, note
+
+
+async def invent_or_patch(
+    *,
+    spec: dict[str, Any],
+    text: str,
+    history: list[dict[str, str]] | None = None,
+) -> tuple[dict[str, Any], dict[str, Any], str]:
+    """Returns (new_spec, usage, note)."""
+    patch, usage, note = await generate_patch(spec=spec, text=text, history=history)
+    new_spec = apply_patch_with_palette(spec, patch)
     return new_spec, usage, note
 
 
-def _offline_freewheel(spec: dict[str, Any], text: str) -> tuple[dict[str, Any], dict[str, Any], str]:
-    """Parts-based invent stub when no API key."""
+def _offline_freewheel_patch(text: str) -> tuple[dict[str, Any], str]:
+    """Parts-based invent stub when no API key. Returns (patch, note)."""
     lower = text.lower()
     slug = re.sub(r"[^a-z0-9]+", "-", lower).strip("-")[:24] or "surprise"
     eid = f"wish_{slug.replace('-', '_')}"[:40]
@@ -208,9 +224,12 @@ def _offline_freewheel(spec: dict[str, Any], text: str) -> tuple[dict[str, Any],
     if palette_name:
         patch["palette"] = palette_name
 
-    patch = _expand_palette(patch)
-    new_spec = _apply_patch_with_palette(spec, patch)
+    return patch, f"A {label} hopped into the mash! (offline magic — add XAI_API_KEY for richer wishes)"
 
+
+def _offline_freewheel(spec: dict[str, Any], text: str) -> tuple[dict[str, Any], dict[str, Any], str]:
+    patch, note = _offline_freewheel_patch(text)
+    new_spec = apply_patch_with_palette(spec, patch)
     usage = {
         "prompt_tokens": 0,
         "completion_tokens": 0,
@@ -218,7 +237,7 @@ def _offline_freewheel(spec: dict[str, Any], text: str) -> tuple[dict[str, Any],
         "path": "offline_freewheel",
         "novel": True,
     }
-    return new_spec, usage, f"A {label} hopped into the mash! (offline magic — add XAI_API_KEY for richer wishes)"
+    return new_spec, usage, note
 
 
 def _pick_color(lower: str) -> str:

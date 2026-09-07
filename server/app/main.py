@@ -11,9 +11,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import db, grok
+from . import db, grok, spellbook
 from .catalog import glossary
-from .grok import invent_or_patch
+from .grok import apply_patch_with_palette, generate_patch, invent_or_patch
 from .limits import (
     allowed_origins,
     client_ip,
@@ -57,7 +57,12 @@ def _startup() -> None:
 
 @app.get("/api/health")
 def health() -> dict[str, Any]:
-    return {"status": "ok", "llm_budget_remaining": llm_budget.remaining()}
+    stats = db.spell_stats()
+    return {
+        "status": "ok",
+        "llm_budget_remaining": llm_budget.remaining(),
+        "spellbook_count": stats["count"],
+    }
 
 
 @app.get("/api/catalog")
@@ -77,43 +82,63 @@ async def wish_patch(request: Request, body: WishBody) -> dict[str, Any]:
     if spec_too_big(body.spec):
         raise HTTPException(413, "That game got too big to wish on.")
 
-    if not wish_window.check(ip):
-        raise HTTPException(
-            status_code=429,
-            detail="Too many wishes right now — take a mash break and try again soon.",
-            headers={"Retry-After": str(wish_window.retry_after(ip))},
-        )
-
     new_spec, intent, usage = apply_tweak(body.spec, body.text)
     note = "Updated!"
     novel = False
 
     if intent == "freewheel":
-        if llm_window.check(ip) and llm_budget.check_and_spend():
-            new_spec, usage, note = await invent_or_patch(
+        cached = spellbook.lookup(body.text)
+        if cached:
+            new_spec = apply_patch_with_palette(body.spec, cached["patch"])
+            note = cached["note"]
+            usage = {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+                "path": "spellbook",
+                "novel": True,
+            }
+        elif not wish_window.check(ip):
+            raise HTTPException(
+                status_code=429,
+                detail="Too many wishes right now — take a mash break and try again soon.",
+                headers={"Retry-After": str(wish_window.retry_after(ip))},
+            )
+        elif llm_window.check(ip) and llm_budget.check_and_spend():
+            patch, usage, note = await generate_patch(
                 spec=body.spec,
                 text=body.text,
                 history=[],
             )
+            new_spec = apply_patch_with_palette(body.spec, patch)
+            source = "grok" if usage.get("path") == "grok" else "offline"
+            spellbook.remember(body.text, patch, note, source=source)
         else:
             new_spec, usage, note = grok._offline_freewheel(body.spec, body.text)
             usage["path"] = "rate_limited_offline"
             note = "The wish wizard needs a little rest — here's some offline magic! Try again in a bit."
         intent = "freewheel"
         novel = True
-    elif intent == "theme":
-        note = "Pinker? Bluer? Done — colors changed!"
-    elif intent == "palette":
-        note = "Whoosh — a whole new world!"
-    elif intent == "ambient":
-        note = "Something floated into the sky!"
-    elif intent == "catalog_add":
-        note = "Added it to the mash mix!"
-    elif intent == "more":
-        note = "More of that — coming right up!"
-    elif intent == "full_rethink":
-        note = "Started a fresh game from that idea."
-        novel = True
+    else:
+        if not wish_window.check(ip):
+            raise HTTPException(
+                status_code=429,
+                detail="Too many wishes right now — take a mash break and try again soon.",
+                headers={"Retry-After": str(wish_window.retry_after(ip))},
+            )
+        if intent == "theme":
+            note = "Pinker? Bluer? Done — colors changed!"
+        elif intent == "palette":
+            note = "Whoosh — a whole new world!"
+        elif intent == "ambient":
+            note = "Something floated into the sky!"
+        elif intent == "catalog_add":
+            note = "Added it to the mash mix!"
+        elif intent == "more":
+            note = "More of that — coming right up!"
+        elif intent == "full_rethink":
+            note = "Started a fresh game from that idea."
+            novel = True
 
     usage = {**usage, "novel": novel or bool(usage.get("novel"))}
     return {
