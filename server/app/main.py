@@ -5,15 +5,23 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import db
+from . import db, grok
 from .catalog import glossary
 from .grok import invent_or_patch
+from .limits import (
+    allowed_origins,
+    client_ip,
+    llm_budget,
+    llm_window,
+    spec_too_big,
+    wish_window,
+)
 from .patches import apply_tweak, build_from_prompt
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -21,9 +29,9 @@ ROOT = Path(__file__).resolve().parents[2]
 app = FastAPI(title="mashbaby", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=allowed_origins(),
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "X-Mash-License"],
 )
 
 
@@ -38,7 +46,7 @@ class TweakBody(BaseModel):
 class WishBody(BaseModel):
     """Stateless parent wish — coffee-table play without a Studio session."""
 
-    text: str = Field(min_length=1, max_length=2000)
+    text: str = Field(min_length=1, max_length=400)
     spec: dict[str, Any]
 
 
@@ -48,8 +56,8 @@ def _startup() -> None:
 
 
 @app.get("/api/health")
-def health() -> dict[str, str]:
-    return {"status": "ok"}
+def health() -> dict[str, Any]:
+    return {"status": "ok", "llm_budget_remaining": llm_budget.remaining()}
 
 
 @app.get("/api/catalog")
@@ -58,22 +66,39 @@ def api_catalog() -> dict[str, Any]:
 
 
 @app.post("/api/wish")
-async def wish_patch(body: WishBody) -> dict[str, Any]:
+async def wish_patch(request: Request, body: WishBody) -> dict[str, Any]:
     """
     Instant catalog floor + generative soul against an inline GameSpec.
     Same path as session tweak, without accounts / session storage.
     Tweaks are free; novel creations are flagged so the client can spend jar credits.
     """
+    ip = client_ip(request)
+
+    if spec_too_big(body.spec):
+        raise HTTPException(413, "That game got too big to wish on.")
+
+    if not wish_window.check(ip):
+        raise HTTPException(
+            status_code=429,
+            detail="Too many wishes right now — take a mash break and try again soon.",
+            headers={"Retry-After": str(wish_window.retry_after(ip))},
+        )
+
     new_spec, intent, usage = apply_tweak(body.spec, body.text)
     note = "Updated!"
     novel = False
 
     if intent == "freewheel":
-        new_spec, usage, note = await invent_or_patch(
-            spec=body.spec,
-            text=body.text,
-            history=[],
-        )
+        if llm_window.check(ip) and llm_budget.check_and_spend():
+            new_spec, usage, note = await invent_or_patch(
+                spec=body.spec,
+                text=body.text,
+                history=[],
+            )
+        else:
+            new_spec, usage, note = grok._offline_freewheel(body.spec, body.text)
+            usage["path"] = "rate_limited_offline"
+            note = "The wish wizard needs a little rest — here's some offline magic! Try again in a bit."
         intent = "freewheel"
         novel = True
     elif intent == "theme":
@@ -112,10 +137,18 @@ def get_session(session_id: str) -> dict[str, Any]:
 
 
 @app.post("/api/session/{session_id}/prompt")
-async def prompt_session(session_id: str, body: PromptBody) -> dict[str, Any]:
+async def prompt_session(session_id: str, request: Request, body: PromptBody) -> dict[str, Any]:
     row = db.get_session(session_id)
     if not row:
         raise HTTPException(404, "Session not found")
+
+    ip = client_ip(request)
+    if not wish_window.check(ip):
+        raise HTTPException(
+            status_code=429,
+            detail="Too many wishes right now — take a mash break and try again soon.",
+            headers={"Retry-After": str(wish_window.retry_after(ip))},
+        )
 
     spec = build_from_prompt(body.text)
     usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0, "path": "deterministic"}
@@ -133,7 +166,7 @@ async def prompt_session(session_id: str, body: PromptBody) -> dict[str, Any]:
 
 
 @app.post("/api/session/{session_id}/tweak")
-async def tweak_session(session_id: str, body: TweakBody) -> dict[str, Any]:
+async def tweak_session(session_id: str, request: Request, body: TweakBody) -> dict[str, Any]:
     row = db.get_session(session_id)
     if not row:
         raise HTTPException(404, "Session not found")
@@ -143,11 +176,17 @@ async def tweak_session(session_id: str, body: TweakBody) -> dict[str, Any]:
     note = "Updated!"
 
     if intent == "freewheel":
-        new_spec, usage, note = await invent_or_patch(
-            spec=spec,
-            text=body.text,
-            history=[{"text": h.get("text", ""), "intent": h.get("intent", "")} for h in row.get("history", [])],
-        )
+        ip = client_ip(request)
+        if llm_window.check(ip) and llm_budget.check_and_spend():
+            new_spec, usage, note = await invent_or_patch(
+                spec=spec,
+                text=body.text,
+                history=[{"text": h.get("text", ""), "intent": h.get("intent", "")} for h in row.get("history", [])],
+            )
+        else:
+            new_spec, usage, note = grok._offline_freewheel(spec, body.text)
+            usage["path"] = "rate_limited_offline"
+            note = "The wish wizard needs a little rest — here's some offline magic! Try again in a bit."
         intent = "freewheel"
     elif intent == "theme":
         note = "Changed the colors."

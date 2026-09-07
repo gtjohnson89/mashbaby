@@ -45,6 +45,7 @@
     baby: ["baby", "babies", "toddler", "kid"],
     dino: ["dino", "dinosaur", "dinosaurs", "t-rex", "trex"],
     puppy: ["puppy", "puppies", "dog", "dogs"],
+    monster: ["monster", "monsters", "cookie monster", "om nom"],
   };
 
   const AMBIENT = {
@@ -190,6 +191,20 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ spec, text }),
       });
+      if (res.status === 429 || res.status === 413) {
+        let detail =
+          res.status === 413
+            ? "That game got too big to wish on."
+            : "Too many wishes right now — take a mash break and try again soon.";
+        try {
+          const errData = await res.json();
+          if (errData.detail) detail = typeof errData.detail === "string" ? errData.detail : detail;
+        } catch (_) {
+          /* ignore */
+        }
+        const offline = applyOffline(spec, text);
+        return Object.assign({}, offline, { note: detail, warn: true });
+      }
       if (!res.ok) throw new Error("wish failed");
       const data = await res.json();
       const novel = !!(data.novel || (data.turn_usage && data.turn_usage.novel) || data.intent === "freewheel");
@@ -577,7 +592,9 @@
         }
 
         pushHistory(runtime.spec);
-        if (result.novel) spendCredit();
+        const skipCredit =
+          result.path === "rate_limited_offline" || result.path === "offline_freewheel";
+        if (result.novel && !skipCredit) spendCredit();
         runtime.applySpec(result.spec);
         persist(result.spec);
         lastShareUrl = shareUrlFor(result.spec);
@@ -591,8 +608,8 @@
         shareBtn.hidden = false;
         refreshJar();
         setSpell(false);
-        const spent = result.novel ? " · spent 1 ★" : " · free tweak";
-        showNote((result.note || "Your wish came true!") + spent, "ok");
+        const spent = result.novel && !skipCredit ? " · spent 1 ★" : " · free tweak";
+        showNote((result.note || "Your wish came true!") + spent, result.warn ? "warn" : "ok");
         if (global.MashSounds) MashSounds.playFeedback("pop");
         window.setTimeout(() => setOpen(false), 900);
       } catch (_) {
