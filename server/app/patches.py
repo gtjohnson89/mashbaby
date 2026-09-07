@@ -6,6 +6,7 @@ import copy
 import re
 from typing import Any
 
+from . import banks
 from .catalog import ACTORS, AMBIENT, COLORS, SPAWNS, TEMPLATES
 
 
@@ -64,6 +65,8 @@ def classify_tweak(text: str) -> str:
     lower = text.lower().strip()
     if any(w in lower for w in ("start over", "new game", "from scratch", "rethink")):
         return "full_rethink"
+    if banks.match_palette(lower):
+        return "palette"
     if _find_color(lower) and any(
         w in lower for w in ("wall", "walls", "floor", "sky", "grass", "water", "make", "paint", "color", "colour")
     ):
@@ -127,6 +130,15 @@ def apply_tweak(spec: dict[str, Any], text: str) -> tuple[dict[str, Any], str, d
 
     if intent == "full_rethink":
         new_spec = build_from_prompt(text)
+        return new_spec, intent, usage
+
+    if intent == "palette":
+        name = banks.match_palette(text)
+        if name:
+            patch = banks.palette_patch(name)
+            new_spec = apply_json_patch(new_spec, {"theme": patch["theme"]})
+            for amb in patch.get("ambient", []):
+                _ensure_ambient(new_spec, amb["kind"])
         return new_spec, intent, usage
 
     if intent == "theme":

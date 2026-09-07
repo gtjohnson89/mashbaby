@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "canvas": { "width": 72, "height": 72, "viewBox": "0 0 72 72" },
+  "bodies": ["blob", "egg", "round", "tall", "long"],
+  "eyes": ["big", "sleepy", "googly", "sparkly", "happy"],
+  "mouths": ["smile", "open-munch", "tiny-o", "grin", "none"],
+  "extras": ["horn", "horns", "ears", "wings", "tail", "antennae", "crown", "hat", "spots", "stripes"],
+  "defaults": {
+    "body": "blob",
+    "eyes": "big",
+    "mouth": "smile",
+    "color": "#ff9ec5",
+    "accent": "#ffe0f0"
+  },
+  "palette": [
+    "#ff9ec5",
+    "#c49bff",
+    "#5ab0ff",
+    "#ffe066",
+    "#7bc96f",
+    "#ff9a5a",
+    "#ff6b6b",
+    "#4aa8d8",
+    "#d4b0ff",
+    "#fff6e8"
+  ]
+}

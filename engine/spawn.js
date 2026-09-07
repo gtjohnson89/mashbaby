@@ -43,6 +43,9 @@
   }
 
   function customHtml(meta) {
+    if (meta.parts && global.MashParts) {
+      return MashParts.render(meta.parts, { width: meta.width, height: meta.height });
+    }
     if (meta.svg) {
       if (meta.svg.includes("<svg")) return meta.svg.replace("<svg", '<svg class="ent__svg"');
       return `<svg class="ent__svg" viewBox="0 0 ${meta.width} ${meta.height}">${meta.svg}</svg>`;

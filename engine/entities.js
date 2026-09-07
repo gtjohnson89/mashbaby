@@ -291,6 +291,7 @@
         soundReady: custom.soundReady,
         soundInteract: custom.soundInteract || "munch",
         soundArrive: custom.soundArrive,
+        parts: custom.parts,
         svg: custom.svg,
       };
     }

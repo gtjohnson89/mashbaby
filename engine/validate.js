@@ -65,6 +65,68 @@
     sparkles: true,
   };
 
+  const PARTS_BODIES = ["blob", "egg", "round", "tall", "long"];
+  const PARTS_EYES = ["big", "sleepy", "googly", "sparkly", "happy"];
+  const PARTS_MOUTHS = ["smile", "open-munch", "tiny-o", "grin", "none"];
+  const PARTS_EXTRAS = ["horn", "horns", "ears", "wings", "tail", "antennae", "crown", "hat", "spots", "stripes"];
+  const PARTS_DEFAULTS = {
+    body: "blob",
+    eyes: "big",
+    mouth: "smile",
+    color: "#ff9ec5",
+    accent: "#ffe0f0",
+  };
+  const HEX_RE = /^#[0-9a-fA-F]{3,8}$/;
+  const SVG_XSS_RE = /<script|<foreignObject|<image|on\w+\s*=|javascript:/i;
+  const VALID_ROLES = { spawn: true, actor: true, ambient: true };
+
+  function sanitizeParts(parts) {
+    if (!isPlainObject(parts)) return undefined;
+    const d = PARTS_DEFAULTS;
+    const out = {
+      body: typeof parts.body === "string" && PARTS_BODIES.indexOf(parts.body) >= 0 ? parts.body : d.body,
+      eyes: typeof parts.eyes === "string" && PARTS_EYES.indexOf(parts.eyes) >= 0 ? parts.eyes : d.eyes,
+      mouth: typeof parts.mouth === "string" && PARTS_MOUTHS.indexOf(parts.mouth) >= 0 ? parts.mouth : d.mouth,
+      color: typeof parts.color === "string" && HEX_RE.test(parts.color) ? parts.color : d.color,
+      accent: typeof parts.accent === "string" && HEX_RE.test(parts.accent) ? parts.accent : d.accent,
+    };
+    let extras = Array.isArray(parts.extras)
+      ? parts.extras.filter((e) => typeof e === "string" && PARTS_EXTRAS.indexOf(e) >= 0)
+      : [];
+    extras = extras.slice(0, 3);
+    if (extras.length) out.extras = extras;
+    return out;
+  }
+
+  function sanitizeCustomEntity(entry) {
+    if (!isPlainObject(entry)) return null;
+    const out = {};
+    out.role = VALID_ROLES[entry.role] ? entry.role : "spawn";
+    const w = typeof entry.width === "number" && Number.isFinite(entry.width) ? Math.min(240, Math.max(16, entry.width)) : 72;
+    const h = typeof entry.height === "number" && Number.isFinite(entry.height) ? Math.min(240, Math.max(16, entry.height)) : 72;
+    out.width = w;
+    out.height = h;
+    if (typeof entry.behavior === "string" && entry.behavior) out.behavior = entry.behavior;
+    const parts = sanitizeParts(entry.parts);
+    if (parts) out.parts = parts;
+    if (typeof entry.svg === "string" && !SVG_XSS_RE.test(entry.svg)) out.svg = entry.svg;
+    if (typeof entry.soundSpawn === "string") out.soundSpawn = entry.soundSpawn;
+    if (typeof entry.soundReady === "string") out.soundReady = entry.soundReady;
+    if (typeof entry.soundInteract === "string") out.soundInteract = entry.soundInteract;
+    if (typeof entry.soundArrive === "string") out.soundArrive = entry.soundArrive;
+    return out;
+  }
+
+  function sanitizeCustomEntities(raw) {
+    if (!isPlainObject(raw)) return {};
+    const out = {};
+    Object.keys(raw).forEach((key) => {
+      const cleaned = sanitizeCustomEntity(raw[key]);
+      if (cleaned) out[key] = cleaned;
+    });
+    return out;
+  }
+
   function isPlainObject(v) {
     return v != null && typeof v === "object" && !Array.isArray(v);
   }
@@ -84,7 +146,7 @@
       return Object.assign({}, FALLBACK_SPEC, { _fallbackReason: "invalid-spec" });
     }
 
-    const customEntities = isPlainObject(raw.customEntities) ? raw.customEntities : {};
+    const customEntities = sanitizeCustomEntities(isPlainObject(raw.customEntities) ? raw.customEntities : {});
     const theme = isPlainObject(raw.theme) ? raw.theme : {};
     const limitsIn = isPlainObject(raw.limits) ? raw.limits : {};
 
