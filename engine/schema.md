@@ -37,6 +37,14 @@ Source of truth for a playable mash game. The runtime loads one JSON document an
       "role": "spawn|actor|ambient",
       "width": 72,
       "height": 72,
+      "parts": {
+        "body": "blob|egg|round|tall|long",
+        "color": "#ff9ec5",
+        "accent": "#ffe0f0",
+        "eyes": "big|sleepy|googly|sparkly|happy",
+        "mouth": "smile|open-munch|tiny-o|grin|none",
+        "extras": ["horn", "wings", "tail"]
+      },
       "svg": "<svg>...</svg>",
       "behavior": "drop_ready|float_pop|splash_swim|seek_and_munch|fly_across",
       "soundSpawn": "cookieDrop",
@@ -46,6 +54,23 @@ Source of truth for a playable mash game. The runtime loads one JSON document an
   }
 }
 ```
+
+### `parts` (preferred over `svg`)
+
+When both `parts` and `svg` are present on a custom entity, **`parts` wins** — the runtime renders via `MashParts.render()` locally.
+
+| Field | Type | Default | Notes |
+|-------|------|---------|--------|
+| `body` | enum | `"blob"` | `blob`, `egg`, `round`, `tall`, `long` |
+| `color` | `#rrggbb` | `"#ff9ec5"` | Main fill |
+| `accent` | `#rrggbb` | derived | Belly tint; renderer lightens `color` ~65% when omitted |
+| `eyes` | enum | `"big"` | `big`, `sleepy`, `googly`, `sparkly`, `happy` |
+| `mouth` | enum | `"smile"` | `smile`, `open-munch`, `tiny-o`, `grin`, `none` |
+| `extras` | string[] | `[]` | Max **3** — `horn`, `horns`, `ears`, `wings`, `tail`, `antennae`, `crown`, `hat`, `spots`, `stripes` |
+
+Vocabulary lives in `engine/banks/parts.json`. `svg` remains supported for legacy shared `?wish=` links.
+
+**Palettes** (`space-night`, `candy`, etc.) are a server-side wish concept — the model or deterministic patch layer expands a palette name into `theme` + additive `ambient`. Palettes are **not** a GameSpec field.
 
 Runtime always **sanitizes** specs on boot (`engine/validate.js`): unknown scene templates fall back to `blank-room`, unknown `onMash` kinds are dropped (or remapped to star/ball), and a missing/broken spec loads the bundled cookies fallback so play never dead-ends on an error screen.
 

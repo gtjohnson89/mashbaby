@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parts Kit Contact Sheet · mashbaby</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Nunito", "Fredoka", system-ui, sans-serif;
+      background: var(--bg, #fff6e8);
+      color: #2a2030;
+      padding: 1.5rem;
+      transition: background 0.2s;
+    }
+    body.dark { --bg: #1a1440; color: #ffe0f0; }
+    h1 { font-size: 1.5rem; margin: 0 0 0.5rem; }
+    .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    button {
+      font: inherit;
+      font-weight: 700;
+      padding: 0.5rem 1rem;
+      border: 2px solid #c49bff;
+      border-radius: 999px;
+      background: #ff9ec5;
+      color: #2a2030;
+      cursor: pointer;
+    }
+    body.dark button { background: #3a2a6a; color: #ffe0f0; border-color: #c49bff; }
+    button.active { background: #c49bff; }
+    section { margin-bottom: 2rem; }
+    h2 { font-size: 1.1rem; margin: 0 0 0.75rem; opacity: 0.85; }
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .cell span {
+      font-size: 0.7rem;
+      text-align: center;
+      max-width: 90px;
+      line-height: 1.2;
+    }
+    .cell .svg-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.35);
+      padding: 4px;
+    }
+    body.dark .cell .svg-wrap { background: rgba(0, 0, 0, 0.25); }
+    .cell .svg-wrap svg { display: block; width: var(--sz, 72px); height: var(--sz, 72px); }
+  </style>
+</head>
+<body>
+  <h1>Parts Kit Contact Sheet</h1>
+  <div class="controls">
+    <button id="btn-light" class="active" type="button">Light backdrop</button>
+    <button id="btn-dark" type="button">Dark backdrop</button>
+    <button id="btn-72" class="active" type="button">72px</button>
+    <button id="btn-144" type="button">144px</button>
+  </div>
+  <section id="sec-bodies"></section>
+  <section id="sec-extras"></section>
+  <section id="sec-random"></section>
+  <section id="sec-presets"></section>
+  <script src="../engine/parts.js"></script>
+  <script>
+    var PRESETS = {
+      unicorn: { body: "egg", eyes: "sparkly", mouth: "smile", extras: ["horn", "tail"] },
+      dragon: { body: "long", eyes: "happy", mouth: "grin", extras: ["wings", "tail", "horns"] },
+      kitty: { body: "round", eyes: "happy", mouth: "smile", extras: ["ears", "tail"] },
+      puppy: { body: "blob", eyes: "big", mouth: "grin", extras: ["ears", "tail"] },
+      truck: { body: "long", eyes: "big", mouth: "smile", extras: ["stripes"] },
+      digger: { body: "long", eyes: "big", mouth: "smile", extras: ["stripes"] },
+      train: { body: "long", eyes: "happy", mouth: "smile", extras: ["stripes", "hat"] },
+      rocket: { body: "tall", eyes: "sparkly", mouth: "tiny-o", extras: ["wings"] },
+      robot: { body: "round", eyes: "big", mouth: "grin", extras: ["antennae"] },
+      bunny: { body: "egg", eyes: "happy", mouth: "smile", extras: ["ears", "tail"] },
+      bear: { body: "round", eyes: "sleepy", mouth: "smile", extras: ["ears"] },
+      elephant: { body: "blob", eyes: "big", mouth: "smile", extras: ["ears", "tail"] },
+      monkey: { body: "round", eyes: "googly", mouth: "grin", extras: ["ears", "tail"] },
+      penguin: { body: "egg", eyes: "happy", mouth: "smile", extras: ["wings"] },
+      snowman: { body: "round", eyes: "happy", mouth: "smile", extras: ["hat"] },
+      fish: { body: "long", eyes: "big", mouth: "tiny-o", extras: ["tail", "stripes"] },
+      bee: { body: "egg", eyes: "happy", mouth: "smile", extras: ["wings", "stripes"] },
+      ladybug: { body: "round", eyes: "sparkly", mouth: "smile", extras: ["spots", "antennae"] },
+      frog: { body: "blob", eyes: "googly", mouth: "grin", extras: ["spots"] },
+      pig: { body: "round", eyes: "happy", mouth: "tiny-o", extras: ["ears", "tail"] },
+      cow: { body: "blob", eyes: "sleepy", mouth: "smile", extras: ["spots", "horns"] },
+      duck: { body: "egg", eyes: "happy", mouth: "smile", extras: ["wings", "tail"] },
+      sheep: { body: "round", eyes: "sleepy", mouth: "smile", extras: ["ears"] },
+      horse: { body: "tall", eyes: "big", mouth: "smile", extras: ["ears", "tail"] },
+      lion: { body: "round", eyes: "happy", mouth: "grin", extras: ["ears", "tail"] },
+      tiger: { body: "long", eyes: "happy", mouth: "grin", extras: ["stripes", "ears"] },
+      owl: { body: "round", eyes: "big", mouth: "tiny-o", extras: ["ears", "wings"] },
+      crab: { body: "round", eyes: "googly", mouth: "grin", extras: ["spots"] },
+      monster: { body: "blob", eyes: "googly", mouth: "open-munch", extras: ["horns"] },
+      heart: { body: "egg", eyes: "happy", mouth: "smile", extras: ["spots"] },
+      moon: { body: "round", eyes: "sleepy", mouth: "smile", extras: [] },
+      star: { body: "round", eyes: "sparkly", mouth: "smile", extras: ["crown"] },
+      balloon: { body: "round", eyes: "happy", mouth: "smile", extras: ["tail"] },
+      flower: { body: "round", eyes: "happy", mouth: "smile", extras: ["crown"] },
+      cloud: { body: "blob", eyes: "sleepy", mouth: "smile", extras: [] },
+      planet: { body: "round", eyes: "big", mouth: "smile", extras: ["spots"] },
+      butterfly: { body: "egg", eyes: "happy", mouth: "smile", extras: ["wings", "antennae"] },
+    };
+
+    var COLORS = ["#ff9ec5", "#c49bff", "#5ab0ff", "#ffe066", "#7bc96f", "#ff9a5a", "#ff6b6b", "#4aa8d8", "#d4b0ff"];
+
+    function cell(label, parts) {
+      var html = MashParts.render(Object.assign({ color: "#ff9ec5" }, parts));
+      return '<div class="cell"><div class="svg-wrap">' + html + '</div><span>' + label + '</span></div>';
+    }
+
+    function section(el, title, cells) {
+      el.innerHTML = '<h2>' + title + '</h2><div class="grid">' + cells.join("") + '</div>';
+    }
+
+    function randomParts() {
+      var v = MashParts.vocab;
+      var bodies = v.bodies || ["blob"];
+      var eyes = v.eyes || ["big"];
+      var mouths = v.mouths || ["smile"];
+      var extras = v.extras || [];
+      var pick = function (arr) { return arr[Math.floor(Math.random() * arr.length)]; };
+      var ex = [];
+      var n = Math.floor(Math.random() * 4);
+      for (var i = 0; i < n; i++) ex.push(pick(extras));
+      return {
+        body: pick(bodies),
+        eyes: pick(eyes),
+        mouth: pick(mouths),
+        color: pick(COLORS),
+        extras: ex.slice(0, 3),
+      };
+    }
+
+    function renderAll() {
+      var v = MashParts.vocab;
+      var bodies = v.bodies || ["blob"];
+      var eyes = v.eyes || ["big"];
+      var extras = v.extras || [];
+
+      var bodyCells = [];
+      bodies.forEach(function (b) {
+        eyes.forEach(function (e) {
+          bodyCells.push(cell(b + " · " + e, { body: b, eyes: e, mouth: "smile" }));
+        });
+      });
+      section(document.getElementById("sec-bodies"), "Bodies × Eyes", bodyCells);
+
+      var extraCells = extras.map(function (ex) {
+        return cell(ex, { body: "blob", eyes: "big", mouth: "smile", extras: [ex] });
+      });
+      section(document.getElementById("sec-extras"), "Extras on default body", extraCells);
+
+      var randCells = [];
+      for (var r = 0; r < 24; r++) {
+        var rp = randomParts();
+        randCells.push(cell("random " + (r + 1), rp));
+      }
+      section(document.getElementById("sec-random"), "Random creatures", randCells);
+
+      var presetCells = Object.keys(PRESETS).map(function (name) {
+        return cell(name, PRESETS[name]);
+      });
+      section(document.getElementById("sec-presets"), "Wish presets", presetCells);
+    }
+
+    document.getElementById("btn-light").onclick = function () {
+      document.body.classList.remove("dark");
+      document.getElementById("btn-light").classList.add("active");
+      document.getElementById("btn-dark").classList.remove("active");
+    };
+    document.getElementById("btn-dark").onclick = function () {
+      document.body.classList.add("dark");
+      document.getElementById("btn-dark").classList.add("active");
+      document.getElementById("btn-light").classList.remove("active");
+    };
+    document.getElementById("btn-72").onclick = function () {
+      document.documentElement.style.setProperty("--sz", "72px");
+      document.getElementById("btn-72").classList.add("active");
+      document.getElementById("btn-144").classList.remove("active");
+    };
+    document.getElementById("btn-144").onclick = function () {
+      document.documentElement.style.setProperty("--sz", "144px");
+      document.getElementById("btn-144").classList.add("active");
+      document.getElementById("btn-72").classList.remove("active");
+    };
+
+    MashParts.load("../engine/banks/parts.json").then(renderAll);
+  </script>
+</body>
+</html>

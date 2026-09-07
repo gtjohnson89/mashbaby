@@ -1,0 +1,262 @@
+{
+  "version": 1,
+  "palettes": {
+    "space-night": {
+      "keywords": ["space", "galaxy", "planet", "rocket", "outer space", "moon", "starry", "cosmos", "astronaut"],
+      "theme": {
+        "wallColor": "#1a1440",
+        "wallDotColors": ["#ffe066", "#c49bff"],
+        "skyTop": "#0f0b2a",
+        "skyBot": "#3a2a6a",
+        "floorColor": "#2a2050",
+        "accent": "#c49bff"
+      },
+      "ambient": [{ "kind": "sparkles", "count": 6 }]
+    },
+    "candy": {
+      "keywords": ["candy", "sweet", "sugar", "lollipop", "gummy", "treats", "cupcake"],
+      "theme": {
+        "wallColor": "#ffd6ef",
+        "wallDotColors": ["#ff9ec5", "#c49bff"],
+        "floorColor": "#ffe0f0",
+        "floorLine": "#ffb8d8",
+        "accent": "#ff6b9d",
+        "gateBtnFrom": "#ff9ec5",
+        "gateBtnTo": "#c49bff"
+      }
+    },
+    "jungle": {
+      "keywords": ["jungle", "rainforest", "tropical", "vine", "parrot", "safari", "wild"],
+      "theme": {
+        "wallColor": "#2a5a30",
+        "wallDotColors": ["#7bc96f", "#ffe066"],
+        "skyTop": "#5ab0ff",
+        "skyBot": "#9ad4ff",
+        "grassColor": "#4a9a40",
+        "floorColor": "#6fbf5a",
+        "accent": "#7bc96f"
+      },
+      "ambient": [{ "kind": "birds", "count": 4 }]
+    },
+    "underwater": {
+      "keywords": ["underwater", "ocean", "sea", "coral", "aquarium", "submarine", "deep"],
+      "theme": {
+        "skyTop": "#4aa8d8",
+        "skyBot": "#9ad4ff",
+        "waterColor": "#4aa8d8",
+        "waterDeep": "#2f7fad",
+        "grassColor": "#5ab0ff",
+        "floorColor": "#3a8fd4",
+        "accent": "#4aa8d8"
+      },
+      "ambient": [{ "kind": "bubbles", "count": 5 }]
+    },
+    "snow": {
+      "keywords": ["snow", "snowy", "winter", "frost", "cold", "blizzard"],
+      "theme": {
+        "wallColor": "#e8f4ff",
+        "wallDotColors": ["#c49bff", "#5ab0ff"],
+        "skyTop": "#c9e9ff",
+        "skyBot": "#f0f8ff",
+        "floorColor": "#fff6e8",
+        "floorLine": "#d4e8f8",
+        "accent": "#5ab0ff"
+      },
+      "ambient": [{ "kind": "sparkles", "count": 4 }]
+    },
+    "beach": {
+      "keywords": ["beach", "sand", "shore", "seaside", "coast", "tide", "shell"],
+      "theme": {
+        "skyTop": "#7ec8ff",
+        "skyBot": "#c9e9ff",
+        "grassColor": "#ffe066",
+        "floorColor": "#f0c98a",
+        "floorLine": "#e0b56e",
+        "waterColor": "#4aa8d8",
+        "accent": "#ff9a5a"
+      }
+    },
+    "sunset": {
+      "keywords": ["sunset", "sunrise", "dusk", "dawn", "evening", "golden", "twilight"],
+      "theme": {
+        "wallColor": "#ff9a5a",
+        "wallDotColors": ["#ffe066", "#ff6b6b"],
+        "skyTop": "#ff9a5a",
+        "skyBot": "#ffd6a8",
+        "floorColor": "#f0c98a",
+        "accent": "#ff6b6b",
+        "gateBtnFrom": "#ff9a5a",
+        "gateBtnTo": "#ff6b6b"
+      }
+    },
+    "rainbow": {
+      "keywords": ["rainbow", "colorful", "multicolor", "prism", "spectrum", "arc"],
+      "theme": {
+        "wallColor": "#ff9ec5",
+        "wallDotColors": ["#ffe066", "#5ab0ff", "#c49bff", "#7bc96f"],
+        "floorColor": "#fff6e8",
+        "skyTop": "#c49bff",
+        "skyBot": "#ffe0f0",
+        "accent": "#5ab0ff",
+        "gateBtnFrom": "#ff9ec5",
+        "gateBtnTo": "#5ab0ff"
+      },
+      "ambient": [{ "kind": "sparkles", "count": 5 }]
+    },
+    "pastel-dream": {
+      "keywords": ["pastel", "dream", "dreamy", "whimsy", "fairy"],
+      "theme": {
+        "wallColor": "#ffe0f0",
+        "wallDotColors": ["#d4b0ff", "#ff9ec5"],
+        "floorColor": "#fff6e8",
+        "floorLine": "#ffe0f0",
+        "accent": "#d4b0ff",
+        "gateBtnFrom": "#ff9ec5",
+        "gateBtnTo": "#d4b0ff"
+      },
+      "ambient": [{ "kind": "clouds", "count": 3 }]
+    },
+    "farm": {
+      "keywords": ["farm", "barn", "field", "meadow", "country", "hay", "tractor"],
+      "theme": {
+        "wallColor": "#c45a4a",
+        "wallDotColors": ["#ffe066", "#7bc96f"],
+        "skyTop": "#7ec8ff",
+        "skyBot": "#c9e9ff",
+        "grassColor": "#7bc96f",
+        "floorColor": "#f0c98a",
+        "accent": "#ff9a5a"
+      }
+    },
+    "desert": {
+      "keywords": ["desert", "dune", "cactus", "oasis"],
+      "theme": {
+        "wallColor": "#f0c98a",
+        "wallDotColors": ["#ff9a5a", "#ffe066"],
+        "skyTop": "#7ec8ff",
+        "skyBot": "#ffe0c8",
+        "floorColor": "#e0b56e",
+        "floorLine": "#c89868",
+        "accent": "#ff9a5a"
+      }
+    },
+    "forest": {
+      "keywords": ["forest", "woods", "trees", "pine", "woodland", "nature", "hike"],
+      "theme": {
+        "wallColor": "#3a5a30",
+        "wallDotColors": ["#7bc96f", "#ffe066"],
+        "skyTop": "#5ab0ff",
+        "skyBot": "#9ad4ff",
+        "grassColor": "#6fbf5a",
+        "floorColor": "#8b4a1f",
+        "floorLine": "#6a3818",
+        "accent": "#7bc96f"
+      },
+      "ambient": [{ "kind": "birds", "count": 3 }]
+    },
+    "bedroom-cozy": {
+      "keywords": ["bedroom", "cozy", "snuggle", "pillow", "blanket", "sleepy", "nightlight"],
+      "theme": {
+        "wallColor": "#d4b0ff",
+        "wallDotColors": ["#ff9ec5", "#fff6e8"],
+        "floorColor": "#ffe0f0",
+        "floorLine": "#d4b0ff",
+        "accent": "#c49bff",
+        "gateBtnFrom": "#d4b0ff",
+        "gateBtnTo": "#ff9ec5"
+      }
+    },
+    "birthday": {
+      "keywords": ["birthday", "party", "celebration", "festive", "confetti", "cake"],
+      "theme": {
+        "wallColor": "#ff9ec5",
+        "wallDotColors": ["#ffe066", "#5ab0ff", "#c49bff"],
+        "floorColor": "#fff6e8",
+        "accent": "#ff6b9d",
+        "gateBtnFrom": "#ff9ec5",
+        "gateBtnTo": "#ffe066"
+      },
+      "ambient": [{ "kind": "sparkles", "count": 6 }]
+    },
+    "halloween-soft": {
+      "keywords": ["halloween", "pumpkin", "spooky", "ghost", "costume", "october", "trick"],
+      "theme": {
+        "wallColor": "#ffd6a8",
+        "wallDotColors": ["#ff9a5a", "#c49bff"],
+        "floorColor": "#ffe0c8",
+        "floorLine": "#ffd6a8",
+        "accent": "#ff9a5a",
+        "gateBtnFrom": "#ff9a5a",
+        "gateBtnTo": "#c49bff"
+      }
+    },
+    "winter-holiday": {
+      "keywords": ["holiday", "christmas", "festive", "wreath", "gift", "merry", "jingle"],
+      "theme": {
+        "wallColor": "#c45a4a",
+        "wallDotColors": ["#7bc96f", "#ffe066"],
+        "skyTop": "#5ab0ff",
+        "skyBot": "#c9e9ff",
+        "floorColor": "#fff6e8",
+        "accent": "#7bc96f",
+        "gateBtnFrom": "#c45a4a",
+        "gateBtnTo": "#7bc96f"
+      },
+      "ambient": [{ "kind": "sparkles", "count": 5 }]
+    },
+    "neon-night": {
+      "keywords": ["neon", "glow", "electric", "disco", "laser", "nightclub"],
+      "theme": {
+        "wallColor": "#2a2050",
+        "wallDotColors": ["#ff9ec5", "#5ab0ff", "#7bc96f"],
+        "skyTop": "#1a1440",
+        "skyBot": "#3a2a6a",
+        "floorColor": "#4a3a70",
+        "accent": "#c49bff",
+        "gateBtnFrom": "#ff9ec5",
+        "gateBtnTo": "#5ab0ff"
+      },
+      "ambient": [{ "kind": "sparkles", "count": 4 }]
+    },
+    "spring-garden": {
+      "keywords": ["spring", "garden", "bloom", "blossom", "petal"],
+      "theme": {
+        "wallColor": "#ffe0f0",
+        "wallDotColors": ["#ff9ec5", "#7bc96f"],
+        "skyTop": "#9ad4ff",
+        "skyBot": "#e8f6ff",
+        "grassColor": "#7bc96f",
+        "floorColor": "#c8f0a8",
+        "accent": "#ff9ec5"
+      },
+      "ambient": [{ "kind": "birds", "count": 3 }]
+    },
+    "storm-soft": {
+      "keywords": ["storm", "rain", "thunder", "cloudy", "weather", "drizzle", "puddle"],
+      "theme": {
+        "wallColor": "#c9d8e8",
+        "wallDotColors": ["#5ab0ff", "#d4b0ff"],
+        "skyTop": "#8aadcc",
+        "skyBot": "#d4e8f8",
+        "floorColor": "#b8c8d8",
+        "floorLine": "#9aadbc",
+        "accent": "#5ab0ff"
+      },
+      "ambient": [{ "kind": "clouds", "count": 4 }]
+    },
+    "cloud-castle": {
+      "keywords": ["castle", "kingdom", "tower", "cloud castle", "sky castle"],
+      "theme": {
+        "wallColor": "#fff6e8",
+        "wallDotColors": ["#d4b0ff", "#5ab0ff"],
+        "skyTop": "#c9e9ff",
+        "skyBot": "#f0f8ff",
+        "floorColor": "#ffe0f0",
+        "accent": "#d4b0ff",
+        "gateBtnFrom": "#d4b0ff",
+        "gateBtnTo": "#5ab0ff"
+      },
+      "ambient": [{ "kind": "clouds", "count": 5 }]
+    }
+  }
+}

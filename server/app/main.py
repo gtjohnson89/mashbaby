@@ -103,6 +103,8 @@ async def wish_patch(request: Request, body: WishBody) -> dict[str, Any]:
         novel = True
     elif intent == "theme":
         note = "Pinker? Bluer? Done — colors changed!"
+    elif intent == "palette":
+        note = "Whoosh — a whole new world!"
     elif intent == "ambient":
         note = "Something floated into the sky!"
     elif intent == "catalog_add":
@@ -190,6 +192,8 @@ async def tweak_session(session_id: str, request: Request, body: TweakBody) -> d
         intent = "freewheel"
     elif intent == "theme":
         note = "Changed the colors."
+    elif intent == "palette":
+        note = "Whoosh — a whole new world!"
     elif intent == "ambient":
         note = "Added something in the sky/background."
     elif intent == "catalog_add":

@@ -881,6 +881,9 @@
    * Boot never throws a toddler-facing error. Bad/missing specs fall back to cookies.
    */
   async function bootFromQuery(mount) {
+    if (global.MashParts && typeof MashParts.load === "function") {
+      MashParts.load();
+    }
     const params = new URLSearchParams(window.location.search);
     const sessionId = params.get("session");
     const specUrl = params.get("spec");

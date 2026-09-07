@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from . import banks
+
 SPAWNS = {
     "cookie": {"role": "spawn", "behavior": "bake_ready", "labels": ["cookie", "cookies", "biscuit"]},
     "icecream": {
@@ -215,6 +217,7 @@ TEMPLATES = {
 
 def glossary() -> dict:
     """Short catalog glossary for LLM prompts (token-cheap)."""
+    bank_vocab = banks.compact_vocab()
     return {
         "spawns": list(SPAWNS.keys()),
         "actors": list(ACTORS.keys()),
@@ -231,4 +234,11 @@ def glossary() -> dict:
             "waterColor",
             "accent",
         ],
+        "parts": {
+            "bodies": bank_vocab["bodies"],
+            "eyes": bank_vocab["eyes"],
+            "mouths": bank_vocab["mouths"],
+            "extras": bank_vocab["extras"],
+        },
+        "palettes": bank_vocab["palettes"],
     }
